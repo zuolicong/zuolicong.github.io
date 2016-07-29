@@ -17,13 +17,11 @@
 <meta property="og:url" content="http://yoursite.com/2015/12/16/灵活使用PHP和MySQL处理时间/index.html">
 <meta property="og:site_name" content="chinging">
 <meta property="og:description" content="MySQL时间日期数据类型 | PHP时间函数 | 时间常量 | 日期序列">
-<meta property="og:updated_time" content="2016-01-06T12:44:50.000Z">
+<meta property="og:updated_time" content="2016-07-29T19:57:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="灵活使用PHP和MySQL处理时间">
 <meta name="twitter:description" content="MySQL时间日期数据类型 | PHP时间函数 | 时间常量 | 日期序列">
 
-    
-    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -100,7 +98,7 @@
 		
 		</div>
 		
-		<p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度，尤其不能受产品经理的需求影响( ´ ▽ ` )ﾉ<br><a id="more"></a></p>
+		<p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度，尤其不能受产品经理的需求影响( ´ ▽ ` )ﾉ</p>
 <h2 id="1-MySQL常用的时间数据类型"><a href="#1-MySQL常用的时间数据类型" class="headerlink" title="1.MySQL常用的时间数据类型"></a>1.MySQL常用的时间数据类型</h2><p>在使用MySQL数据库存储时间变量时字段类型尽量使用MySQL已有的时间数据类型，更方便而且效率更高。MySQL常用的时间数据类型如下：</p>
 <table>
 <thead>
@@ -128,6 +126,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <p>一般来说，如果需要在数据库存储时间信息，最好把日期和具体时间都纪录下来，即使产品经理提的需求只是日期或者具体时间，以防后面会用到，比如说按时间排序，或者需要以时间为条件查找某些数据，因此最好使用datetime数据类型或者date和time数据类型的结合。建表代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">create table table_name (</div><div class="line">  `create_time` datetime default NULL</div><div class="line">);</div></pre></td></tr></table></figure>
 <p>或者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">create table table_name (</div><div class="line">  `create_date` date default NULL,</div><div class="line">  `create_time` time default NULL</div><div class="line">);</div></pre></td></tr></table></figure></p>
@@ -252,11 +251,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
 			
 		
 			
@@ -268,6 +267,10 @@
 			
 		
 			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
@@ -276,7 +279,11 @@
 			
 		
 			
-				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
 			
 		
 			
@@ -295,14 +302,6 @@
 				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
@@ -319,25 +318,12 @@
         
           <li>
             
-            	<a href="http://weibo.com/u/2967430153" target="_blank" title="my weibo">my weibo</a>
+            	<a href="http://weibo.com/u/2967430153" target="_blank" title="My Weibo">My Weibo</a>
             
           </li>
         
     </ul>
 </div>
-
-  
-
-
-  <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
-</div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">Weibo</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
-</div>
-
 
 </aside>
 </div>

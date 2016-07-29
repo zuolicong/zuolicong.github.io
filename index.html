@@ -22,8 +22,6 @@
 <meta name="twitter:description" content="左礼聪的博客 | PHP | web后台 | app后台 | js | html | css | Python">
 
     
-    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
-    
     
     <link rel="icon" href="/img/favicon.ico">
     
@@ -97,69 +95,15 @@
         <p>实习结束之后就把Macbook Pro还给公司了，现在只能用回原来的屌丝电脑，在习惯了MBP的高分辨率之后再看现在的电脑感觉像素都能看出来了==。但是没办法，日子还得继续不是吗？！重装了windows系统，硬盘一不小心格式化了，之前装的Ubuntu系统也没有了，这两天再次通过EasyBCD引导安装了Ubuntu14.04搞成双系统，网上有很多这方面的资料，在这里系统的总结一下，并且包含了EasyBCD和32位以及64位Ubuntu14.04的下载地址，以后再要装windows和Ubuntu的双系统用起来也方便。</p>
 <h2 id="前期准备工作"><a href="#前期准备工作" class="headerlink" title="前期准备工作"></a>前期准备工作</h2><p>首先要在电脑的硬盘中分出一个区用来安装Ubuntu，桌面上右键计算机-&gt;管理-&gt;磁盘管理,找一个大的盘（例如F盘）,选中,右键菜单选择压缩卷，在“输入压缩空间量”那一栏输入用来安装Ubuntu系统的大小（我用了60000MB），然后点压缩，这60000MB将成为空闲的空间，用于后面Ubuntu系统的安装。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png" alt="分区"><br>然后下载EasyBCD和Ubuntu的安装包，下面给出了下载地址：</p>
 <ul>
-<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza" target="_blank" rel="external">http://pan.baidu.com/s/1qXwBSza</a></li>
-<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="external">http://pan.baidu.com/s/1o6UVJRG</a></li>
-<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="external">http://pan.baidu.com/s/1mhruuq0</a></li>
+<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza">http://pan.baidu.com/s/1qXwBSza</a></li>
+<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG">http://pan.baidu.com/s/1o6UVJRG</a></li>
+<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0">http://pan.baidu.com/s/1mhruuq0</a></li>
 </ul>
-<p>这里以64位Ubuntu14.04（安装包为ubuntu-14.04-desktop-amd64.iso，32位类似）为例，下载完成之后安装好EasyBCD，将ubuntu-14.04-desktop-amd64.iso放在C盘目录下，并将ubuntu-14.04-desktop-amd64.iso里面的两个文件解压出来也放在C盘目录下，这两个文件分别是initrd.lz和vmlinuz.efi，在casper文件夹里。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fcasper.png" alt="casper"></p>
-<h2 id="操作EasyBCD"><a href="#操作EasyBCD" class="headerlink" title="操作EasyBCD"></a>操作EasyBCD</h2><p>打开EasyBCD，点击“添加新条目”，然后选择“NeoGrub”，点击“安装”，再点击配置，如下图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNeoGrub.png" alt="NeoGrub"><br>这时会弹出一个menu.lst文件，将menu.lst文件里的内容替换成以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">title Install Ubuntu</div><div class="line">root (hd0,0)</div><div class="line">kernel (hd0,0)/vmlinuz.efi boot=casper iso-scan/filename=/ubuntu-14.04-desktop-amd64.iso locale=zh_CN.UTF-8</div><div class="line">initrd (hd0,0)/initrd.lz</div><div class="line">title reboot</div><div class="line">reboot</div><div class="line">title halt</div><div class="line">halt</div></pre></td></tr></table></figure></p>
-<p>hd0后面的数字表示C盘所处的硬盘顺序，一般C盘是第一个盘，表示为hd0，如果C盘是第二个盘，则为hd1，依此类推。如果自己的Ubuntu的安装包名称与上述文字中的不相符，或者initrd.lz和vmlinuz.efi文件没有后缀名，则要把上面相应的地方改成符合自己的安装包情况的名称。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fmenu.png" alt="menu.lst"><br>至此，C盘会多出一个NST文件夹和四个文件，这时就可以重启电脑准备安装Ubuntu14.04了。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FC%E7%9B%98%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89.png" alt="C盘中增加的文件（夹）"></p>
-<h2 id="安装Ubuntu系统"><a href="#安装Ubuntu系统" class="headerlink" title="安装Ubuntu系统"></a>安装Ubuntu系统</h2><p>重启电脑，可以看到多了一个启动项“NeoGrub引导加载器”，选择该项enter，然后选择“install ubuntu”，另外两项分别是“重启”和“关机”，是为了防止安装出错而设的，这个在之前的menu.lst配置文件中已经设定好了。接下来如果正常的话就会自动执行相关命令，屏幕会被命令行刷屏，这时只需要等它执行完，如果在这一步报错，一般来说就是之前的menu.lst配置文件不对，无法访问C盘，这时只要“reboot”然后进入windows系统重新配置就行。命令执行完之后就进入了一个临时的Ubuntu系统：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E4%B8%B4%E6%97%B6Ubuntu%E7%B3%BB%E7%BB%9F.jpg" alt="临时Ubuntu系统"><br>但是这还没完，接下来按照以下步骤进行：</p>
-<ol>
-<li>按Ctrl+Alt+T组合键进入终端，输入“sudo umount -l /isodevice”并enter;</li>
-<li>双击桌面的“安装Ubuntu14.04 LTS”图标进行安装；</li>
-<li>在“欢迎”界面，语言选择中文（简体）；</li>
-<li>在“准备安装Ubuntu”界面，不用选中“安装中下载更新”和“安装这个第三方软件选项”，否则会安装比较慢，这些可以在Ubuntu系统安装好之后再进行。为保险起见，安装过程可以不用联网；</li>
-<li>在“安装类型界面”，选择“其它选项（您可以自己创建、调整分区，或者为Ubuntu选择多个分区）”；</li>
-</ol>
-<p>然后就要设置分区了<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FUbuntu%E5%88%86%E5%8C%BA.jpg" alt="设置分区"><br>我设置了交换空间、/boot、/home和/四个分区。双击显示为空闲的设备（其大小为你最初在硬盘分出的区的大小，我这里为60000MB），就会弹出“创建分区”窗口，需要你设置每个分区的大小，类型，位置，用于和挂载点，每一个分区设置完成之后，点击确定，然后再次双击“空闲”设备，设置下一个分区，直到所有的分区设置完毕，新分区的位置都是空间起始位置，每个分区的其它设置及说明如下表所示（以60G空闲空间为例，）：</p>
-<table>
-<thead>
-<tr>
-<th>大小</th>
-<th>类型</th>
-<th>用于</th>
-<th>挂载点</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>6000MB</td>
-<td>逻辑分区</td>
-<td>交换空间</td>
-<td>无</td>
-<td>缓存,一般与电脑内存差不多大</td>
-</tr>
-<tr>
-<td>200MB</td>
-<td>逻辑分区</td>
-<td>Ext4日志文件系统</td>
-<td>/boot</td>
-<td>启动引导区</td>
-</tr>
-<tr>
-<td>40000MB</td>
-<td>逻辑分区</td>
-<td>Ext4日志文件系统</td>
-<td>/home</td>
-<td>类似于windows下我的文档</td>
-</tr>
-<tr>
-<td>剩下的空间</td>
-<td>主分区</td>
-<td>Ext4日志文件系统</td>
-<td>/</td>
-<td>系统盘</td>
-</tr>
-</tbody>
-</table>
-<p>注意，所有分区都设置好之后下面还有一个“安装启动引导器的设备”，其位置要选择/boot所在的sda*, 例如的/boot所在的分区为/dev/sda8,则选择/dev/sda8。<br>都设置好之后点击“现在安装”，然后设置地区默认即可，直接继续，键盘布局选择汉语，然后设置姓名、计算机名、用户名和密码，建议计算机名和用户名设置简短一点，这样以后打开Ubuntu终端每行前面不会有很长一串文字。<br>以上都搞定之后就可以安装Ubuntu了，等待一段时间直到安装好，然后重启电脑进入windows系统，完成剩下的工作。</p>
-<h2 id="剩下的工作"><a href="#剩下的工作" class="headerlink" title="剩下的工作"></a>剩下的工作</h2><p>重启电脑进入windows之后，打开EasyBCD，点击添加新条目-&gt;操作系统-&gt;NeoGrub-&gt;删除，将“NeoGrub”引导项删除（此时C盘里的NeoGrub文件就没有了），否则每次打开电脑都会出现“NeoGrub引导加载器”选项。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%A0%E9%99%A4NeoGrub%E5%BC%95%E5%AF%BC%E9%A1%B9.png" alt="删除NeoGrub引导项"><br>然后点击“Linux/BSD”设置ubuntu启动项，类型选择GRUB(Legacy)，名称自定义，驱动器选择当初/boot所在分区（根据大小来判定，如果当初/boot分区设置为200MB，这里显示的大小稍小于200MB的分区即为/boot分区）,我的是选择Linux-190MB。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%BC%95%E5%AF%BCUbuntu%E5%90%AF%E5%8A%A8.png" alt="设置Ubuntu启动项"><br>然后就可以把C盘里的Ubuntu安装包文件及initrd.lz和vmlinuz.efi文件删除，精简C盘。注意，C盘里的NST文件夹不能删！因为它是为Ubuntu系统启动提供驱动的，如果删除那么Ubuntu将不能启动，对此我有血的教训，因为不小心将NST文件夹删除，启动Ubuntu报错，后来通过数据恢复软件将NST文件恢复，Ubuntu才正常启动。下面这个图比较明了的说明了问题：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNST.png" alt="NST"><br>上述工作都完成之后就可以重启电脑，这时就可以选择你想要进入的系统了。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%8F%8C%E7%B3%BB%E7%BB%9F.jpg" alt="双系统"></p>
-
         
         
         <p class="article-more-link">
+          
+            <a href="/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/#more">Read More</a>
           
        </p>
     </div>
@@ -220,19 +164,11 @@
         
         <p>实习完已经有一个月了，过年在家的主旋律是吃饭睡觉，来学校几天了心也还没收回来，昨天给电脑重新装了ubuntu系统，然后把hexo安装好了，心血来潮写一篇博客对找工作实习以来的事作一个总结吧。想了想最好的标题应该是非典型程序猿的程序员之路。</p>
 <p>不知不觉已经作为一个工（cheng）程（xu）师（yuan）实习了三个月了，从大一到大三上学期从来没想过自己以后的职业会是码代码，因为本来专业（信息管理与信息系统）属于管理学院，有点偏管理，只是和计算机有着些许的联系，自己平时也不是一个典型的程序猿，并没有花很多的时间在码代码上，然而就是这样的一个我，最后却走上了程序员的道路，现在想想，是偶然，也是必然吧（后来发现程序猿这个工作确实很适合闷骚的我，还有一点比较合我心意的是程序猿面试都是单面，没有群面，不需要和一群人撕逼，那画面太美）！</p>
-<p>转折点应该是大三暑假我决定不考研而是找工作，具体原因不再赘述。当时正在跟着班主任做一个大数据的项目，打算作为学校要求的暑期实习，然而在决定找工作之后就后悔之前没有找一个公司的实习了，毕竟有实习经历对找工作是很有帮助的。不过这个项目对后面找工作的帮助也很大，在我的简历中划上了浓墨重彩的一笔。项目做了一个月左右差不多就告一段落了，然后就开始找实习。七月底基本已经没有来学校招实习生的企业了，于是就在智联招聘和51job上投了简历给武汉地区的一些公司。考虑到之前做过和PHP相关的项目，就都投的PHP研发工程师的岗位，但是因为很久没有接触PHP了，有好几家公司的笔试或面试没有通过。看来还是不是搞编程的料，心里这样想着。正当非常失望的时候，杭州阿拉丁信息科技股份有限公司武汉分公司主动联系了我，让我过去面试，这让我喜出望外，于是就约了一个时间过去面试。有了前面的面试经历，我发现自己对PHP不怎么熟，于是这家就报了C++的岗位，毕竟我也是过了二级C++的人（认真脸）。笔试结果那边的主管很满意，聊了聊就决定录用了，考虑到我之前做过PHP相关的项目，而且公司正好比较缺PHP研发人员，就让我做PHP相关的开发工作，这真是有心栽花花不开，无心插柳柳成荫！于是我就这样开始了从事世界上最美的语言–PHP（这个梗估计要说一辈子hhh!）的编程工作。</p>
-<p>在实习的过程中对PHP进行了进一步的巩固，同时也通过一个学姐（在腾讯）和一个学长（在百度）、微信公众号、qq群、论坛等各种途径进行内推，但是很悲催的几乎都石沉大海，只有蘑菇街给了一次电话面试的机会，后面也没有音讯了。后来想想应该是简历的问题，字体太小，而且写了太多与岗位无关的内容，显得很不专业（虽然本来就不是很专业==）。于是我大刀阔斧地对简历进行了删改，决定在秋招中好好的大展拳脚。</p>
-<p>九月开学秋招就轰轰烈烈的展开了，我的宣讲会列表也越排越长，每天都在网申、笔试和面试，简直忙成狗。然而最初情况也并不理想，很多简历杳无音讯，一些公司都止于一面，渐渐的也有些灰心。后面又上演了有心栽花花不开，无心插柳柳成荫的戏码，那天被通知去武大面苏宁的研发岗位，面试完了之后下楼看见formax金融圈在一楼面试，正好是中午，没什么人，于是就决定进去霸面，积累面经也是好的，没想到后面又电话进行了二面。几天之后，当我从武大信息学部美团的面试教室无精打采地走出来之后，意外收到了formax的offer，这让我精神为之一振，顿时长叹了一口气，有一个保底的offer，心里踏实多了，接下来就可以放开手脚接着去各种笔试面试了。看来万事真的要敢于去尝试，不试怎么知道结果如何呢？这天下着大雨，晚上还有几场笔试，还好带了伞。走出大楼的时候遇到一个计算机学院的研究生学长，也是来面美团的，就一起回学校，顺便把他送回了宿舍。这个时候几场笔试都已经开始一段时间了，我就就近去参加了跟谁学的笔试，多试试总是好的。笔试题目都是与PHP相关的，有了暑期的实习经历，这些题目都不在话下，后来就接到了跟谁学的面试通知，也顺利拿到了offer，期间还拿到了tp-link的offer。此时也才到九月底，我拿到了三个offer，可以放松一下好好过个国庆节了。</p>
-<p>后面我就没再继续找了，决定在已经拿到的三个offer里选一个，formax毕竟是霸面拿到的offer，没那么有归属感，tp-link平台虽然很大，也有在向互联网方向发展，但是还是有一点偏传统企业，约束太多，而跟谁学致力于互联网教育，是一家典型的互联网企业，很有前景，薪资福利都不错，还有其它的激励，最重要的一个原因是它要在武汉建立一个研发中心，去那边工作相当于从零开始，进步空间很大，学到的东西更多，而我以后打算创业，在这样的环境下工作对以后的创业（如果有机会的话）会很有帮助，再就是武汉离家近，也不像北上广深那样拥堵，那样压力大，就像跟谁学的CTO在面试我的时候说的，在武汉幸福感会很高（根据我后面去北京总部实习的经历来看，确实是这样，在北京每天上班挤地铁像战斗一般，有一次打个的本来半个小时的路程硬是走了一个多小时，虽然当时是包住宿，但是对高的离谱的房租也有所耳闻，而武汉则会好很多），于是就选择了去跟谁学，并且在11月份开始了在跟谁学的为期三个月的实习。</p>
-<p>在这三个月里，我可以说见证了跟谁学的飞速发展，先是去北京实习，去的时候总部还是中关村软件园2号楼2308室，条件比较差，分配的导师和另一个同事分别向两边挪了挪，腾出一个位置作为我的工位，但是设备一流，人手一台Macbook Pro，我也不例外的发了一台，还有两件纪念衫，因为是t恤，到现在还没穿过。大家工作都很有干劲，我也不例外，当时虽然刚去北京感冒了，但依然阻挡不了我的热情，因为创业是一件如此让人热血澎湃的事！中午和晚上都有工作餐送过来，伙食也是一流。好吃的东西总能激励人更努力的做事，嗯。在这里待了一个星期左右，公司就搬到了新大楼，共有五层，装修高端大气上档次，我的工位安排在二楼一个靠窗的位置，阳光充足，可以边码代码边晒太阳，这在北京的冬天是极好的。就这样一直实习到12月上旬，因为学校新开了一门课，我就回武汉上课了。12月下旬的时候，跟谁学武汉研发中心就装修好了，我就直接到那边实习了。武研位于街道口百脑汇二期20楼，对面就是武大信息学部，在上面可以俯瞰武大信息学部全景，因为地段比较好，又是5A级写字楼，房租是光谷软件园的两倍，不得不说公司土豪==。CTO的说法是之所以选在这里，是不想被武汉当地的传统企业所同化，而要保持一个互联网创业公司的活力。事实也确实是这样，武研几乎是与北京总部保持同步，所有数据是共享的，网络互通，有电话会议可以随时与北京总部进行无障碍交流，装备也都是Macbook Pro，就连室内装修都是一样的，甚至比总部有过之而无不及，最重要的是武研研发人员有一半以上来自华科、武大（相当一部分是研究生）和百度的，这样硬件和人员配备，可以说在街道口，甚至是整个武汉地区都算是顶级互联网公司，在这样的公司上班自然是斗志满满，也更加坚定了在程序员这条路上走下去的信念。</p>
-<p>中关村软件园2号楼2308室旧总部：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%97%A7%E6%80%BB%E9%83%A8.jpg" alt="旧总部"></p>
-<p>博彦科技大厦新总部：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E5%A4%A7%E5%8E%A6.jpeg" alt="新总部大厦"><br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpeg" alt="新总部会议室"></p>
-<p>街道口百脑汇二期20楼武汉研发中心：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E6%B1%89%E7%A0%94%E5%8F%91%E4%B8%AD%E5%BF%83.jpg" alt="武汉研发中心"><br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E7%A0%94%E9%BB%84%E9%B9%A4%E6%A5%BC%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpg" alt="武研黄鹤楼会议室"></p>
-<p>在武汉研发中心一直实习到16年二月底，在这期间收获颇多，在PHP、Phalcon框架、git、数据库、网络等知识上有了质的飞跃，也让我更加确定程序员是适合我的职业，可以专注于码代码而不受其它事情的羁绊，而且它是具有创造性的，每当看到自己写的东西顺利运行的时候都有一种满满的成就感。在实习期间我的工号是1962，这意味着我是第1962个加入跟谁学的，也是跟谁学第一批校招的员工之一，以后也算得上是元老级的员工了，这让我兴奋莫名。后来听说我们部门的同事有工号是两位数的，听起来让人羡慕不已，这才是真正元老级的人物，听他们说起公司成立之初炎炎夏日在北京五道口地下室光着膀子码代码的事情，就像听着一群英雄好汉一起打江山的荡气回肠的故事，让人热血澎湃，激动不已，创业真是一件让人向往的事！说不定有朝一日，我也会像他们一样，为创立一家新公司而奋不顾身。未来的事，谁又说的准呢？<br><img src="http://a3.att.hudong.com/64/20/01300000098168132125204980537.jpg" alt="i&#39;m a coder"></p>
-
         
         
         <p class="article-more-link">
+          
+            <a href="/2016/03/01/非典型程序猿的程序员之路/#more">Read More</a>
           
        </p>
     </div>
@@ -289,23 +225,11 @@
         <p>使用git作为版本控制工具，在代码上线之前需要打tag，便于团队有条不紊地上线代码。在这里总结一下打tag的方法与可能用到的技巧。</p>
 <h2 id="打tag并上线的常规流程"><a href="#打tag并上线的常规流程" class="headerlink" title="打tag并上线的常规流程"></a>打tag并上线的常规流程</h2><p>一般是基于master分支打tag并推送tag到远程仓库，然后上线。要上线的代码合到master分支上之后，切换到master分支，pull最新代码，然后查看远程仓库的最新tag（假设为release_im_v0.0.9.8），在其基础上打tag release_im_v0.0.9.9。然后查看线上tag是哪一个（假设为release_im_v0.0.9.7），将新打的tag与线上tag进行diff，看代码有没有冲突，或者有没有别人合到master上但是暂时还不能上线的代码，如果没有问题，就可以把tag推送到远程仓库，然后请QA君帮忙上线。需要注意的是不能直接在线上tag的基础上加一作为新的tag，因为在你打tag期间团队其他人可能也打了tag，只是还没来得及上线而已，为避免冲突，需要基于远程仓库的最新tag打新tag。打tag并上线的流程如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ git checkout master</div><div class="line">$ git pull</div><div class="line">$ git tag|grep im|tail                                 #查看远程仓库含有im的最新tag</div><div class="line">$ git tag -a release_im_v0.0.9.9 -m &apos;im咨询记录更改&apos;     #一般打含有附注的标签</div><div class="line">$ git diff release_im_v0.0.9.7 release_im_v0.0.9.9     #如果改动比较多，也可以在gitlab上进行diff（当然要先push）</div><div class="line">#如果diff没有问题，就可以把tag推送到远程仓库，远程仓库如果是origin，则可省略origin</div><div class="line">$ git push [origin] release_im_v0.0.9.9                #推送具体的tag到远程仓库</div><div class="line">$ git push [origin] --tags                             #一次推送所有的tag到远程仓库</div></pre></td></tr></table></figure>
-<p>如果diff有冲突，或者master分支上含有不能上线的代码，或者要修改一个线上的bug比较紧急，就需要基于线上tag拉分支，把自己的修改的代码应用到该分支，然后在该分支上打tag上线。需要注意的是，基于自己的分支打tag上完线，还是要把该分支合到master上，不然自己改动的代码会被后面基于master的tag所覆盖。</p>
-<h2 id="基于线上tag修改代码并上线"><a href="#基于线上tag修改代码并上线" class="headerlink" title="基于线上tag修改代码并上线"></a>基于线上tag修改代码并上线</h2><p>当需要解决线上bug比较紧急，则需要基于线上tag拉分支，在该分支修改代码并打tag上线。步骤如下（依然假设线上tag为release_im_v0.0.9.7，远程仓库最新tag为release_im_v0.0.9.8）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ git fetch --tags                              #查看远程仓库的tag</div><div class="line">$ git branch new_branch release_im_v0.0.9.7     #基于线上tag拉分支new_branch</div><div class="line">$ git checkout new_branch                       #切到该分支并修改代码解决bug</div><div class="line">$ git commit -am &apos;fix bug&apos;                      #tag默认打在最新提交的commit上</div><div class="line">$ git tag -a release_im_v0.0.9.9 -m &apos;fix bug&apos;   </div><div class="line">$ git diff release_im_v0.0.9.7 release_im_v0.0.9.9</div><div class="line">$ git push --tags</div></pre></td></tr></table></figure></p>
-<h2 id="git-cherry-pick的用法"><a href="#git-cherry-pick的用法" class="headerlink" title="git cherry-pick的用法"></a>git cherry-pick的用法</h2><p>当需要把某个分支的某次commit应用到另外一个分支，git cherry-pick命令就派上用场了。假设我们现在在a分支上，该分支上有一个commit（假设其哈希码为d986206）需要应用到b分支上，那么可以这么做：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ git log --oneline       #查看a分支commit历史找到需要应用到b分支上的commit的哈希码为d986206</div><div class="line">$ git show d986206        #确认commit内容</div><div class="line">$ git checkout b</div><div class="line">$ git cherry-pick d986206</div></pre></td></tr></table></figure></p>
-<h2 id="基于线上tag打补丁并上线"><a href="#基于线上tag打补丁并上线" class="headerlink" title="基于线上tag打补丁并上线"></a>基于线上tag打补丁并上线</h2><p>假如我们在自己的test分支修改了很多代码，合到master之后发现master不能上线，而且该分支同时修改了两个相关的线上的tag（例如PC站和手机m站），需要分别把相应的修改应用到相应的tag上，并上线，由于commit的次数比较多，用cherry-pick就比较麻烦，这时我们就需要打补丁了。现在假设PC站线上tag和远程仓库最新tag都是release_www_v3.2.2.6，手机m站线上tag和远程仓库最新tag都是release_m_v3.0.8.3，运用第二部分中的方法基于线上tag分别拉取PC站和m站的分支www-patch和m-patch。<br>首先我们在自己的分支（这里是test分支）运行 git log –oneline 查看commit信息：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fgit_log.png" alt="git log"><br>发现544cf8c（主站获取id）、86721b7（m站获取id）、3971048（获取主站name）和f788477（获取m站name）这四次commit是需要上线的改动，于是我们将当前test分支与fb20a04（建立m类）这次commit进行diff以查看前四个commit的内容，确认无误后就可以打补丁了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git diff fb20a04 test &gt; patch</div></pre></td></tr></table></figure>
-<p>用vim打开patch文件截取部分如下：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fpatch.png" alt="patch"><br>接下来切换到需要应用补丁的分支并应用该补丁：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git checkout www-patch</div><div class="line">$ git apply patch           #在www-patch分支应用补丁</div><div class="line">$ git diff                  #查看应用补丁之后的diff以确认无误</div><div class="line">$ rm patch                  #删除patch文件，git不需要追踪该文件，便于commit</div><div class="line">$ git commit -am &apos;apply patch&apos;</div><div class="line">$ git tag -a release_www_v3.2.2.7 -m &apos;打补丁上线&apos;</div></pre></td></tr></table></figure></p>
-<p>当然也可以把patch文件放在~/目录下，假设代码文件夹也在~/目录下，然后这样打补丁：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ git diff fb20a04 test &gt; ~/patch</div><div class="line">$ git checkout www-patch</div><div class="line">$ patch -p1&lt;~/patch</div><div class="line">$ git commit -am &apos;apply patch&apos;</div><div class="line">$ git tag -a release_www_v3.2.2.7</div></pre></td></tr></table></figure>
-<p>接下来就是打手机m站的tag，这时我们就可以用git cherry-pick方法了，先在www-patch分支查看应用补丁的commit：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fapply_patch.png" alt="apply patch"><br>然后应用到m-patch分支：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ git checkout m-patch</div><div class="line">$ git cherry-pick 584f3ef</div><div class="line">$ git commit -am &apos;apply patch&apos;</div><div class="line">$ git tag -a release_m_v3.0.8.4 -m &apos;打补丁上线&apos;</div><div class="line">$ git push --tags           #最后把新打的tag都推送到远程仓库以上线</div></pre></td></tr></table></figure>
-<h2 id="基于特定的commit打tag"><a href="#基于特定的commit打tag" class="headerlink" title="基于特定的commit打tag"></a>基于特定的commit打tag</h2><p>假如我们想基于cf57ec4（建立www类）这次commit打tag，可以这样做：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git tag -a www0.9.9 cf57ec4 -m &apos;建立www类&apos;</div></pre></td></tr></table></figure>
-<p>运行git show www0.9.9命令查看该tag信息，可以看到是基于cf57ec4（建立www类）这次commit打的：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fshow_tag.png" alt="show tag"><br>打tag时如果不指定commit，则默认基于当前分支的最新一次commit打。</p>
-
         
         
         <p class="article-more-link">
+          
+            <a href="/2016/01/23/git打tag的方法和技巧/#more">Read More</a>
           
        </p>
     </div>
@@ -365,30 +289,11 @@
     <div class="article-content">
         
         <p>日志可以在程序出现bug时帮助排查问题，如果没有日志在解决bug时很可能无从下手。这两天修改了一个发邮件的功能，期间在自测代码的时候对日志接触的比较多，也意识到其重要性，在这里小结一下。由于公司使用的是Phalcon框架，因此这篇文章主要说说在Phalcon框架下添加日志，当然也包括一些原生的添加日志方法。</p>
-<h2 id="在本地测试时添加日志的方法"><a href="#在本地测试时添加日志的方法" class="headerlink" title="在本地测试时添加日志的方法"></a>在本地测试时添加日志的方法</h2><p>在本地命令行测试时，一般直接用echo输出日志内容即可，例如在本地命令行测试发送邮件功能是否能正常运行时，可以把邮件的收件人、标题、内容、附件及发送结果等用echo输出：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$to = <span class="string">'zuolicong@foxmail.com'</span>;</div><div class="line"><span class="keyword">foreach</span> ($areaAttachs <span class="keyword">as</span> $city =&gt; $attachs) &#123;</div><div class="line">    $title = $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $body = <span class="string">"附件为"</span> . $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $mailTarget = <span class="keyword">$this</span>-&gt;getAreaMailer($city);</div><div class="line">    <span class="keyword">if</span> ($mailTarget) &#123;                             <span class="comment">//收件人存在</span></div><div class="line">        $mailTarget = explode(<span class="string">','</span>,$mailTarget);</div><div class="line">        $ret = Lib\Email::send($to, $title, $body, (<span class="keyword">array</span>) $mailTarget, $attachs);</div><div class="line">        <span class="comment">//直接输出日志内容，当然，测试的时候不一定要真的执行发邮件函数，先输出邮件相关内容看看有没有问题，或者先把邮件接收人改为自己</span></div><div class="line">        <span class="keyword">echo</span> <span class="string">"send mail to:&#123;$to&#125; title:&#123;$title&#125; body:&#123;$body&#125; attachs:&#123;$attachs&#125; ret:"</span> . json_decode($ret);      </div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">echo</span> “can not found mail receiver city:&#123;$city&#125;”;     <span class="comment">//邮件发送失败，直接输出日志内容</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="在Phalcon框架下添加日志"><a href="#在Phalcon框架下添加日志" class="headerlink" title="在Phalcon框架下添加日志"></a>在Phalcon框架下添加日志</h2><p>Phalcon框架下添加日志的方法如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//可以添加不同级别的日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;critical(<span class="string">"message"</span>);   <span class="comment">//critical级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;emergency(<span class="string">"message"</span>);  <span class="comment">//emergency级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;fatal(<span class="string">"message"</span>);      <span class="comment">//fatal级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;debug(<span class="string">"message"</span>);      <span class="comment">//debug级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;error(<span class="string">"message"</span>);      <span class="comment">//error级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(<span class="string">"message"</span>);       <span class="comment">//只记录相关信息，不给出错误级别，也可能没有错误</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;notice(<span class="string">"message"</span>);     <span class="comment">//notice级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;warning(<span class="string">"message"</span>);    <span class="comment">//warning级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;alert(<span class="string">"message"</span>);      <span class="comment">//alert级别日志</span></div><div class="line"></div><div class="line"><span class="comment">//也可以直接使用log()方法，加一个表示错误级别的常量参数（可省略）</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;log(<span class="string">"message"</span>[,ERROR LEVEL]);</div></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//1中的发邮件功能在线上环境时可以这样添加日志</span></div><div class="line">$to = <span class="string">'zuolicong@foxmail.com'</span>;</div><div class="line"><span class="keyword">foreach</span> ($areaAttachs <span class="keyword">as</span> $city =&gt; $attachs) &#123;</div><div class="line">    $title = $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $body = <span class="string">"附件为"</span> . $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $mailTarget = <span class="keyword">$this</span>-&gt;getAreaMailer($city);</div><div class="line">    <span class="keyword">if</span> ($mailTarget) &#123;                            <span class="comment">//收件人存在</span></div><div class="line">        $mailTarget = explode(<span class="string">','</span>,$mailTarget);</div><div class="line">        $ret = Lib\Email::send($to, $title, $body, (<span class="keyword">array</span>) $mailTarget, $attachs);</div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" send mail to:&#123;$to&#125; city:&#123;$city&#125; ret:"</span> . json_encode($ret));</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//邮件发送失败的日志</span></div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" cant not found mail receiver city:&#123;$city&#125;"</span>);        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//添加error级别的日志</span></div><div class="line"><span class="keyword">if</span> ($ins-&gt;save()) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    \Phalcon\DI::getDefault()-&gt;getLog()-&gt;error(<span class="keyword">__method__</span> . <span class="string">" error with message:"</span> . $ins-&gt;getErrorAsString());</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>正常情况下Phalcon日志会自动记录时间，但是在命令行运行不会记录，如果要在命令行运行或测试代码，例如执行定时脚本任务等，可以记录时间，这样便于在出错时尽快找出原因所在。此外，如果想要日志直接在终端输出，可以在函数的第一行加上下面这种用法：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;toConsole=<span class="number">1</span>;</div></pre></td></tr></table></figure>
-<p>Phalcon日志详细用法可以参考：<a href="https://docs.phalconphp.com/zh/latest/reference/logging.html" target="_blank" rel="external">日志记录（Logging） — Phalcon 2.0.8 文档 - Phalcon PHP</a></p>
-<h2 id="在哪里添加日志比较合适"><a href="#在哪里添加日志比较合适" class="headerlink" title="在哪里添加日志比较合适"></a>在哪里添加日志比较合适</h2><p>一般来说容易出错的函数最好添加日志，便于排查问题，例如上述的发邮件函数。在开发的时候有些地方不知道是否容易出错，但是后续过程中如果出现了bug，就会知道哪些地方容易出错，可以加上日志。还是以发邮件功能为例，突然有一天南京那边的分公司说没有收到邮件，但是其它的分公司都收到了（后面发现有少数几家分公司也没有收到邮件，只是没有在意而已），经排查发现原来是生成邮件附件时出问题了，附件内容用iconv(“UTF-8”, “GB2312”, $contents)函数进行字符编码转换时$contents含有特殊字符转换失败，iconv()函数返回false，导致附件内容为空，邮件不发送，在修复了这个bug之后给iconv()函数添加了日志如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">createAttach</span><span class="params">($fileName, $contents)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (!$contents) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">    $contents = iconv(<span class="string">"UTF-8"</span>, <span class="string">"GB18030//IGNORE"</span>, $contents);  <span class="comment">//忽略特殊字符</span></div><div class="line">    <span class="keyword">if</span>($contents)&#123;</div><div class="line">        <span class="keyword">return</span> file_put_contents($fileName, $contents);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" 字符编码转换失败！"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>需要注意的是file_put_contents()函数也容易出错从而返回false，因此这里选择给file_put_contents()函数添加日志也是可以的。此外在次数不是很多的循环中可以添加日志，这样可以知道每条是否执行成功。</p>
-<h2 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h2><p>日志一般在/tmp/或者/apps/log/文件夹里，假如我们要查看的日志文件为daily_mail.log，可以使用tail命令查看最近的日志：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tail -f daily_mail.log</div></pre></td></tr></table></figure>
-<p>或者先用less命令打开日志文件，再shift+g跳到日志末尾，然后用k/j进行上/下翻动：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">less daily_mail.log</div></pre></td></tr></table></figure>
-<p>如果需要查找包含特定信息的日志内容，例如查找包含南京的最近的日志，可以这样做：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tail -f daily_mail.log | grep 南京</div></pre></td></tr></table></figure>
-<p>如果需要查看所有包含南京的日志信息，可以这样做：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">less daily_mail.log | grep 南京</div></pre></td></tr></table></figure>
-
         
         
         <p class="article-more-link">
+          
+            <a href="/2016/01/05/Phalcon框架中添加日志/#more">Read More</a>
           
        </p>
     </div>
@@ -447,7 +352,34 @@
 </header>
     <div class="article-content">
         
-        <p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度，尤其不能受产品经理的需求影响( ´ ▽ ` )ﾉ<br>
+        <p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度，尤其不能受产品经理的需求影响( ´ ▽ ` )ﾉ</p>
+<h2 id="1-MySQL常用的时间数据类型"><a href="#1-MySQL常用的时间数据类型" class="headerlink" title="1.MySQL常用的时间数据类型"></a>1.MySQL常用的时间数据类型</h2><p>在使用MySQL数据库存储时间变量时字段类型尽量使用MySQL已有的时间数据类型，更方便而且效率更高。MySQL常用的时间数据类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>时间类型</th>
+<th>存储空间</th>
+<th>时间格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>datetime</td>
+<td>8 bytes</td>
+<td>YYYY-MM-DD HH:MM:SS</td>
+</tr>
+<tr>
+<td>date</td>
+<td>3 bytes</td>
+<td>YYYY-MM-DD</td>
+</tr>
+<tr>
+<td>time</td>
+<td>3 bytes</td>
+<td>HH:MM:SS</td>
+</tr>
+</tbody>
+</table>
         
         
         <p class="article-more-link">
@@ -545,11 +477,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
 			
 		
 			
@@ -561,6 +493,10 @@
 			
 		
 			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
@@ -569,7 +505,11 @@
 			
 		
 			
-				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
 			
 		
 			
@@ -588,14 +528,6 @@
 				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
@@ -612,25 +544,12 @@
         
           <li>
             
-            	<a href="http://weibo.com/u/2967430153" target="_blank" title="my weibo">my weibo</a>
+            	<a href="http://weibo.com/u/2967430153" target="_blank" title="My Weibo">My Weibo</a>
             
           </li>
         
     </ul>
 </div>
-
-  
-
-
-  <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
-</div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">Weibo</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
-</div>
-
 
 </aside>
 </div>

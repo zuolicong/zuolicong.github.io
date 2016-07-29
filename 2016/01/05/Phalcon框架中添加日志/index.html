@@ -17,13 +17,11 @@
 <meta property="og:url" content="http://yoursite.com/2016/01/05/Phalcon框架中添加日志/index.html">
 <meta property="og:site_name" content="chinging">
 <meta property="og:description" content="Phalcon框架中添加日志 | 测试代码添加日志">
-<meta property="og:updated_time" content="2016-07-29T19:36:02.000Z">
+<meta property="og:updated_time" content="2016-07-29T19:57:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phalcon框架中添加日志">
 <meta name="twitter:description" content="Phalcon框架中添加日志 | 测试代码添加日志">
 
-    
-    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -101,6 +99,7 @@
 		</div>
 		
 		<p>日志可以在程序出现bug时帮助排查问题，如果没有日志在解决bug时很可能无从下手。这两天修改了一个发邮件的功能，期间在自测代码的时候对日志接触的比较多，也意识到其重要性，在这里小结一下。由于公司使用的是Phalcon框架，因此这篇文章主要说说在Phalcon框架下添加日志，当然也包括一些原生的添加日志方法。</p>
+<a id="more"></a>
 <h2 id="在本地测试时添加日志的方法"><a href="#在本地测试时添加日志的方法" class="headerlink" title="在本地测试时添加日志的方法"></a>在本地测试时添加日志的方法</h2><p>在本地命令行测试时，一般直接用echo输出日志内容即可，例如在本地命令行测试发送邮件功能是否能正常运行时，可以把邮件的收件人、标题、内容、附件及发送结果等用echo输出：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$to = <span class="string">'zuolicong@foxmail.com'</span>;</div><div class="line"><span class="keyword">foreach</span> ($areaAttachs <span class="keyword">as</span> $city =&gt; $attachs) &#123;</div><div class="line">    $title = $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $body = <span class="string">"附件为"</span> . $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $mailTarget = <span class="keyword">$this</span>-&gt;getAreaMailer($city);</div><div class="line">    <span class="keyword">if</span> ($mailTarget) &#123;                             <span class="comment">//收件人存在</span></div><div class="line">        $mailTarget = explode(<span class="string">','</span>,$mailTarget);</div><div class="line">        $ret = Lib\Email::send($to, $title, $body, (<span class="keyword">array</span>) $mailTarget, $attachs);</div><div class="line">        <span class="comment">//直接输出日志内容，当然，测试的时候不一定要真的执行发邮件函数，先输出邮件相关内容看看有没有问题，或者先把邮件接收人改为自己</span></div><div class="line">        <span class="keyword">echo</span> <span class="string">"send mail to:&#123;$to&#125; title:&#123;$title&#125; body:&#123;$body&#125; attachs:&#123;$attachs&#125; ret:"</span> . json_decode($ret);      </div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">echo</span> “can not found mail receiver city:&#123;$city&#125;”;     <span class="comment">//邮件发送失败，直接输出日志内容</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="在Phalcon框架下添加日志"><a href="#在Phalcon框架下添加日志" class="headerlink" title="在Phalcon框架下添加日志"></a>在Phalcon框架下添加日志</h2><p>Phalcon框架下添加日志的方法如下：</p>
@@ -240,11 +239,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
 			
 		
 			
@@ -256,6 +255,10 @@
 			
 		
 			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
@@ -264,7 +267,11 @@
 			
 		
 			
-				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
 			
 		
 			
@@ -283,14 +290,6 @@
 				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
@@ -307,25 +306,12 @@
         
           <li>
             
-            	<a href="http://weibo.com/u/2967430153" target="_blank" title="my weibo">my weibo</a>
+            	<a href="http://weibo.com/u/2967430153" target="_blank" title="My Weibo">My Weibo</a>
             
           </li>
         
     </ul>
 </div>
-
-  
-
-
-  <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
-</div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">Weibo</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
-</div>
-
 
 </aside>
 </div>

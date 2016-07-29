@@ -28,14 +28,12 @@
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%BC%95%E5%AF%BCUbuntu%E5%90%AF%E5%8A%A8.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNST.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%8F%8C%E7%B3%BB%E7%BB%9F.jpg">
-<meta property="og:updated_time" content="2016-07-29T19:36:02.000Z">
+<meta property="og:updated_time" content="2016-07-29T19:57:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="windows系统下通过EasyBCD引导安装Ubuntu14.04">
 <meta name="twitter:description" content="双系统 | Ubuntu | EasyBCD">
 <meta name="twitter:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png">
 
-    
-    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -119,6 +117,7 @@
 <li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="external">http://pan.baidu.com/s/1o6UVJRG</a></li>
 <li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="external">http://pan.baidu.com/s/1mhruuq0</a></li>
 </ul>
+<a id="more"></a>
 <p>这里以64位Ubuntu14.04（安装包为ubuntu-14.04-desktop-amd64.iso，32位类似）为例，下载完成之后安装好EasyBCD，将ubuntu-14.04-desktop-amd64.iso放在C盘目录下，并将ubuntu-14.04-desktop-amd64.iso里面的两个文件解压出来也放在C盘目录下，这两个文件分别是initrd.lz和vmlinuz.efi，在casper文件夹里。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fcasper.png" alt="casper"></p>
 <h2 id="操作EasyBCD"><a href="#操作EasyBCD" class="headerlink" title="操作EasyBCD"></a>操作EasyBCD</h2><p>打开EasyBCD，点击“添加新条目”，然后选择“NeoGrub”，点击“安装”，再点击配置，如下图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNeoGrub.png" alt="NeoGrub"><br>这时会弹出一个menu.lst文件，将menu.lst文件里的内容替换成以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">title Install Ubuntu</div><div class="line">root (hd0,0)</div><div class="line">kernel (hd0,0)/vmlinuz.efi boot=casper iso-scan/filename=/ubuntu-14.04-desktop-amd64.iso locale=zh_CN.UTF-8</div><div class="line">initrd (hd0,0)/initrd.lz</div><div class="line">title reboot</div><div class="line">reboot</div><div class="line">title halt</div><div class="line">halt</div></pre></td></tr></table></figure></p>
 <p>hd0后面的数字表示C盘所处的硬盘顺序，一般C盘是第一个盘，表示为hd0，如果C盘是第二个盘，则为hd1，依此类推。如果自己的Ubuntu的安装包名称与上述文字中的不相符，或者initrd.lz和vmlinuz.efi文件没有后缀名，则要把上面相应的地方改成符合自己的安装包情况的名称。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fmenu.png" alt="menu.lst"><br>至此，C盘会多出一个NST文件夹和四个文件，这时就可以重启电脑准备安装Ubuntu14.04了。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FC%E7%9B%98%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89.png" alt="C盘中增加的文件（夹）"></p>
@@ -285,11 +284,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
 			
 		
 			
@@ -301,6 +300,10 @@
 			
 		
 			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
@@ -309,7 +312,11 @@
 			
 		
 			
-				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
 			
 		
 			
@@ -328,14 +335,6 @@
 				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
@@ -352,25 +351,12 @@
         
           <li>
             
-            	<a href="http://weibo.com/u/2967430153" target="_blank" title="my weibo">my weibo</a>
+            	<a href="http://weibo.com/u/2967430153" target="_blank" title="My Weibo">My Weibo</a>
             
           </li>
         
     </ul>
 </div>
-
-  
-
-
-  <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
-</div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">Weibo</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
-</div>
-
 
 </aside>
 </div>
