@@ -1,0 +1,632 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>windows系统下通过EasyBCD引导安装Ubuntu14.04 | chinging</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="zuolicong">
+    
+
+    
+    <meta name="description" content="双系统 | Ubuntu | EasyBCD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windows系统下通过EasyBCD引导安装Ubuntu14.04">
+<meta property="og:url" content="http://yoursite.com/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/index.html">
+<meta property="og:site_name" content="chinging">
+<meta property="og:description" content="双系统 | Ubuntu | EasyBCD">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fcasper.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNeoGrub.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fmenu.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FC%E7%9B%98%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E4%B8%B4%E6%97%B6Ubuntu%E7%B3%BB%E7%BB%9F.jpg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FUbuntu%E5%88%86%E5%8C%BA.jpg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%A0%E9%99%A4NeoGrub%E5%BC%95%E5%AF%BC%E9%A1%B9.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%BC%95%E5%AF%BCUbuntu%E5%90%AF%E5%8A%A8.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNST.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%8F%8C%E7%B3%BB%E7%BB%9F.jpg">
+<meta property="og:updated_time" content="2016-03-05T04:00:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windows系统下通过EasyBCD引导安装Ubuntu14.04">
+<meta name="twitter:description" content="双系统 | Ubuntu | EasyBCD">
+<meta name="twitter:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="chinging" title="chinging"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
+				<h2 class="blog-motto">My Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/" title="windows系统下通过EasyBCD引导安装Ubuntu14.04" itemprop="url">windows系统下通过EasyBCD引导安装Ubuntu14.04</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-02T14:54:56.000Z" itemprop="datePublished"> 发表于 2016-03-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-前期准备工作"><span class="toc-number">1.</span> <span class="toc-text">1.前期准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-操作EasyBCD"><span class="toc-number">2.</span> <span class="toc-text">2.操作EasyBCD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-安装Ubuntu系统"><span class="toc-number">3.</span> <span class="toc-text">3.安装Ubuntu系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-剩下的工作"><span class="toc-number">4.</span> <span class="toc-text">4.剩下的工作</span></a></li></ol>
+		
+		</div>
+		
+		<p>实习结束之后就把Macbook Pro还给公司了，现在只能用回原来的屌丝电脑，在习惯了MBP的高分辨率之后再看现在的电脑感觉像素都能看出来了==。但是没办法，日子还得继续不是吗？！重装了windows系统，硬盘一不小心格式化了，之前装的Ubuntu系统也没有了，这两天再次通过EasyBCD引导安装了Ubuntu14.04搞成双系统，网上有很多这方面的资料，在这里系统的总结一下，并且包含了EasyBCD和32位以及64位Ubuntu14.04的下载地址，以后再要装windows和Ubuntu的双系统用起来也方便。<br><a id="more"></a></p>
+<h2 id="1-前期准备工作"><a href="#1-前期准备工作" class="headerlink" title="1.前期准备工作"></a>1.前期准备工作</h2><p>首先要在电脑的硬盘中分出一个区用来安装Ubuntu，桌面上右键计算机-&gt;管理-&gt;磁盘管理,找一个大的盘（例如F盘）,选中,右键菜单选择压缩卷，在“输入压缩空间量”那一栏输入用来安装Ubuntu系统的大小（我用了60000MB），然后点压缩，这60000MB将成为空闲的空间，用于后面Ubuntu系统的安装。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png" alt="分区"><br>然后下载EasyBCD和Ubuntu的安装包，下面给出了下载地址：</p>
+<ul>
+<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza" target="_blank" rel="external">http://pan.baidu.com/s/1qXwBSza</a></li>
+<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="external">http://pan.baidu.com/s/1o6UVJRG</a></li>
+<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="external">http://pan.baidu.com/s/1mhruuq0</a></li>
+</ul>
+<p>这里以64位Ubuntu14.04（安装包为ubuntu-14.04-desktop-amd64.iso，32位类似）为例，下载完成之后安装好EasyBCD，将ubuntu-14.04-desktop-amd64.iso放在C盘目录下，并将ubuntu-14.04-desktop-amd64.iso里面的两个文件解压出来也放在C盘目录下，这两个文件分别是initrd.lz和vmlinuz.efi，在casper文件夹里。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fcasper.png" alt="casper"></p>
+<h2 id="2-操作EasyBCD"><a href="#2-操作EasyBCD" class="headerlink" title="2.操作EasyBCD"></a>2.操作EasyBCD</h2><p>打开EasyBCD，点击“添加新条目”，然后选择“NeoGrub”，点击“安装”，再点击配置，如下图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNeoGrub.png" alt="NeoGrub"><br>这时会弹出一个menu.lst文件，将menu.lst文件里的内容替换成以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">title Install Ubuntu</div><div class="line">root (hd0,0)</div><div class="line">kernel (hd0,0)/vmlinuz.efi boot=casper iso-scan/filename=/ubuntu-14.04-desktop-amd64.iso locale=zh_CN.UTF-8</div><div class="line">initrd (hd0,0)/initrd.lz</div><div class="line">title reboot</div><div class="line">reboot</div><div class="line">title halt</div><div class="line">halt</div></pre></td></tr></table></figure></p>
+<p>hd0后面的数字表示C盘所处的硬盘顺序，一般C盘是第一个盘，表示为hd0，如果C盘是第二个盘，则为hd1，依此类推。如果自己的Ubuntu的安装包名称与上述文字中的不相符，或者initrd.lz和vmlinuz.efi文件没有后缀名，则要把上面相应的地方改成符合自己的安装包情况的名称。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fmenu.png" alt="menu.lst"><br>至此，C盘会多出一个NST文件夹和四个文件，这时就可以重启电脑准备安装Ubuntu14.04了。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FC%E7%9B%98%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89.png" alt="C盘中增加的文件（夹）"></p>
+<h2 id="3-安装Ubuntu系统"><a href="#3-安装Ubuntu系统" class="headerlink" title="3.安装Ubuntu系统"></a>3.安装Ubuntu系统</h2><p>重启电脑，可以看到多了一个启动项“NeoGrub引导加载器”，选择该项enter，然后选择“install ubuntu”，另外两项分别是“重启”和“关机”，是为了防止安装出错而设的，这个在之前的menu.lst配置文件中已经设定好了。接下来如果正常的话就会自动执行相关命令，屏幕会被命令行刷屏，这时只需要等它执行完，如果在这一步报错，一般来说就是之前的menu.lst配置文件不对，无法访问C盘，这时只要“reboot”然后进入windows系统重新配置就行。命令执行完之后就进入了一个临时的Ubuntu系统：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E4%B8%B4%E6%97%B6Ubuntu%E7%B3%BB%E7%BB%9F.jpg" alt="临时Ubuntu系统"><br>但是这还没完，接下来按照以下步骤进行：</p>
+<ol>
+<li>按Ctrl+Alt+T组合键进入终端，输入“sudo umount -l /isodevice”并enter;</li>
+<li>双击桌面的“安装Ubuntu14.04 LTS”图标进行安装；</li>
+<li>在“欢迎”界面，语言选择中文（简体）；</li>
+<li>在“准备安装Ubuntu”界面，不用选中“安装中下载更新”和“安装这个第三方软件选项”，否则会安装比较慢，这些可以在Ubuntu系统安装好之后再进行。为保险起见，安装过程可以不用联网；</li>
+<li>在“安装类型界面”，选择“其它选项（您可以自己创建、调整分区，或者为Ubuntu选择多个分区）”；</li>
+</ol>
+<p>然后就要设置分区了<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FUbuntu%E5%88%86%E5%8C%BA.jpg" alt="设置分区"><br>我设置了交换空间、/boot、/home和/四个分区。双击显示为空闲的设备（其大小为你最初在硬盘分出的区的大小，我这里为60000MB），就会弹出“创建分区”窗口，需要你设置每个分区的大小，类型，位置，用于和挂载点，每一个分区设置完成之后，点击确定，然后再次双击“空闲”设备，设置下一个分区，直到所有的分区设置完毕，新分区的位置都是空间起始位置，每个分区的其它设置及说明如下表所示（以60G空闲空间为例，）：</p>
+<table>
+<thead>
+<tr>
+<th>大小</th>
+<th>类型</th>
+<th>用于</th>
+<th>挂载点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6000MB</td>
+<td>逻辑分区</td>
+<td>交换空间</td>
+<td>无</td>
+<td>缓存,一般与电脑内存差不多大</td>
+</tr>
+<tr>
+<td>200MB</td>
+<td>逻辑分区</td>
+<td>Ext4日志文件系统</td>
+<td>/boot</td>
+<td>启动引导区</td>
+</tr>
+<tr>
+<td>40000MB</td>
+<td>逻辑分区</td>
+<td>Ext4日志文件系统</td>
+<td>/home</td>
+<td>类似于windows下我的文档</td>
+</tr>
+<tr>
+<td>剩下的空间</td>
+<td>主分区</td>
+<td>Ext4日志文件系统</td>
+<td>/</td>
+<td>系统盘</td>
+</tr>
+</tbody>
+</table>
+<p>注意，所有分区都设置好之后下面还有一个“安装启动引导器的设备”，其位置要选择/boot所在的sda*, 例如的/boot所在的分区为/dev/sda8,则选择/dev/sda8。<br>都设置好之后点击“现在安装”，然后设置地区默认即可，直接继续，键盘布局选择汉语，然后设置姓名、计算机名、用户名和密码，建议计算机名和用户名设置简短一点，这样以后打开Ubuntu终端每行前面不会有很长一串文字。<br>以上都搞定之后就可以安装Ubuntu了，等待一段时间直到安装好，然后重启电脑进入windows系统，完成剩下的工作。</p>
+<h2 id="4-剩下的工作"><a href="#4-剩下的工作" class="headerlink" title="4.剩下的工作"></a>4.剩下的工作</h2><p>重启电脑进入windows之后，打开EasyBCD，点击添加新条目-&gt;操作系统-&gt;NeoGrub-&gt;删除，将“NeoGrub”引导项删除（此时C盘里的NeoGrub文件就没有了），否则每次打开电脑都会出现“NeoGrub引导加载器”选项。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%A0%E9%99%A4NeoGrub%E5%BC%95%E5%AF%BC%E9%A1%B9.png" alt="删除NeoGrub引导项"><br>然后点击“Linux/BSD”设置ubuntu启动项，类型选择GRUB(Legacy)，名称自定义，驱动器选择当初/boot所在分区（根据大小来判定，如果当初/boot分区设置为200MB，这里显示的大小稍小于200MB的分区即为/boot分区）,我的是选择Linux-190MB。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%BC%95%E5%AF%BCUbuntu%E5%90%AF%E5%8A%A8.png" alt="设置Ubuntu启动项"><br>然后就可以把C盘里的Ubuntu安装包文件及initrd.lz和vmlinuz.efi文件删除，精简C盘。注意，C盘里的NST文件夹不能删！因为它是为Ubuntu系统启动提供驱动的，如果删除那么Ubuntu将不能启动，对此我有血的教训，因为不小心将NST文件夹删除，启动Ubuntu报错，后来通过数据恢复软件将NST文件恢复，Ubuntu才正常启动。下面这个图比较明了的说明了问题：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2FNST.png" alt="NST"><br>上述工作都完成之后就可以重启电脑，这时就可以选择你想要进入的系统了。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%8F%8C%E7%B3%BB%E7%BB%9F.jpg" alt="双系统"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/system/">system</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux/">linux</a><a href="/tags/Ubuntu/">Ubuntu</a><a href="/tags/双系统/">双系统</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/" data-title="windows系统下通过EasyBCD引导安装Ubuntu14.04 | chinging" data-tsina="1469600371227" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/03/01/非典型程序猿的程序员之路/"  title="非典型程序猿的程序员之路">
+ <strong>下一篇：</strong><br/> 
+ <span>非典型程序猿的程序员之路
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/" data-title="windows系统下通过EasyBCD引导安装Ubuntu14.04" data-url="http://yoursite.com/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-前期准备工作"><span class="toc-number">1.</span> <span class="toc-text">1.前期准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-操作EasyBCD"><span class="toc-number">2.</span> <span class="toc-text">2.操作EasyBCD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-安装Ubuntu系统"><span class="toc-number">3.</span> <span class="toc-text">3.安装Ubuntu系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-剩下的工作"><span class="toc-number">4.</span> <span class="toc-text">4.剩下的工作</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/PHP/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/PHP/" title="PHP">PHP<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/git/" title="git">git<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/log/" title="log">log<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/system/" title="system">system<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/patch/" title="patch">patch<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/log/" title="log">log<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tag/" title="tag">tag<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/双系统/" title="双系统">双系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1469600371227&verifier=fb1431d2&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Keep calm and code on. <br/>
+			loving life,loving programming.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1469600371227" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/zuolicong" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/zuolicong" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+		<a href="mailto:zuolicong@foxmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="zuolicong">zuolicong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"zuolicong"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

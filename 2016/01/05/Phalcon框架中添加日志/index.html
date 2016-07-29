@@ -1,0 +1,587 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Phalcon框架中添加日志 | chinging</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="zuolicong">
+    
+
+    
+    <meta name="description" content="Phalcon框架中添加日志 | 测试代码添加日志">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Phalcon框架中添加日志">
+<meta property="og:url" content="http://yoursite.com/2016/01/05/Phalcon框架中添加日志/index.html">
+<meta property="og:site_name" content="chinging">
+<meta property="og:description" content="Phalcon框架中添加日志 | 测试代码添加日志">
+<meta property="og:updated_time" content="2016-01-23T06:48:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Phalcon框架中添加日志">
+<meta name="twitter:description" content="Phalcon框架中添加日志 | 测试代码添加日志">
+
+    
+    <link rel="alternative" href="/atom.xml" title="chinging" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="chinging" title="chinging"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
+				<h2 class="blog-motto">My Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/05/Phalcon框架中添加日志/" title="Phalcon框架中添加日志" itemprop="url">Phalcon框架中添加日志</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-05T03:20:54.000Z" itemprop="datePublished"> 发表于 2016-01-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-在本地测试时添加日志的方法"><span class="toc-number">1.</span> <span class="toc-text">1.在本地测试时添加日志的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-在Phalcon框架下添加日志"><span class="toc-number">2.</span> <span class="toc-text">2.在Phalcon框架下添加日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-在哪里添加日志比较合适"><span class="toc-number">3.</span> <span class="toc-text">3.在哪里添加日志比较合适</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-查看日志"><span class="toc-number">4.</span> <span class="toc-text">4.查看日志</span></a></li></ol>
+		
+		</div>
+		
+		<p>日志可以在程序出现bug时帮助排查问题，如果没有日志在解决bug时很可能无从下手。这两天修改了一个发邮件的功能，期间在自测代码的时候对日志接触的比较多，也意识到其重要性，在这里小结一下。由于公司使用的是Phalcon框架，因此这篇文章主要说说在Phalcon框架下添加日志，当然也包括一些原生的添加日志方法。<br><a id="more"></a></p>
+<h2 id="1-在本地测试时添加日志的方法"><a href="#1-在本地测试时添加日志的方法" class="headerlink" title="1.在本地测试时添加日志的方法"></a>1.在本地测试时添加日志的方法</h2><p>在本地命令行测试时，一般直接用echo输出日志内容即可，例如在本地命令行测试发送邮件功能是否能正常运行时，可以把邮件的收件人、标题、内容、附件及发送结果等用echo输出：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$to = <span class="string">'zuolicong@foxmail.com'</span>;</div><div class="line"><span class="keyword">foreach</span> ($areaAttachs <span class="keyword">as</span> $city =&gt; $attachs) &#123;</div><div class="line">    $title = $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $body = <span class="string">"附件为"</span> . $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $mailTarget = <span class="keyword">$this</span>-&gt;getAreaMailer($city);</div><div class="line">    <span class="keyword">if</span> ($mailTarget) &#123;                             <span class="comment">//收件人存在</span></div><div class="line">        $mailTarget = explode(<span class="string">','</span>,$mailTarget);</div><div class="line">        $ret = Lib\Email::send($to, $title, $body, (<span class="keyword">array</span>) $mailTarget, $attachs);</div><div class="line">        <span class="comment">//直接输出日志内容，当然，测试的时候不一定要真的执行发邮件函数，先输出邮件相关内容看看有没有问题，或者先把邮件接收人改为自己</span></div><div class="line">        <span class="keyword">echo</span> <span class="string">"send mail to:&#123;$to&#125; title:&#123;$title&#125; body:&#123;$body&#125; attachs:&#123;$attachs&#125; ret:"</span> . json_decode($ret);      </div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">echo</span> “can not found mail receiver city:&#123;$city&#125;”;     <span class="comment">//邮件发送失败，直接输出日志内容</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="2-在Phalcon框架下添加日志"><a href="#2-在Phalcon框架下添加日志" class="headerlink" title="2.在Phalcon框架下添加日志"></a>2.在Phalcon框架下添加日志</h2><p>Phalcon框架下添加日志的方法如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//可以添加不同级别的日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;critical(<span class="string">"message"</span>);   <span class="comment">//critical级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;emergency(<span class="string">"message"</span>);  <span class="comment">//emergency级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;fatal(<span class="string">"message"</span>);      <span class="comment">//fatal级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;debug(<span class="string">"message"</span>);      <span class="comment">//debug级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;error(<span class="string">"message"</span>);      <span class="comment">//error级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(<span class="string">"message"</span>);       <span class="comment">//只记录相关信息，不给出错误级别，也可能没有错误</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;notice(<span class="string">"message"</span>);     <span class="comment">//notice级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;warning(<span class="string">"message"</span>);    <span class="comment">//warning级别日志</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;alert(<span class="string">"message"</span>);      <span class="comment">//alert级别日志</span></div><div class="line"></div><div class="line"><span class="comment">//也可以直接使用log()方法，加一个表示错误级别的常量参数（可省略）</span></div><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;log(<span class="string">"message"</span>[,ERROR LEVEL]);</div></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//1中的发邮件功能在线上环境时可以这样添加日志</span></div><div class="line">$to = <span class="string">'zuolicong@foxmail.com'</span>;</div><div class="line"><span class="keyword">foreach</span> ($areaAttachs <span class="keyword">as</span> $city =&gt; $attachs) &#123;</div><div class="line">    $title = $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $body = <span class="string">"附件为"</span> . $city . <span class="string">"IM响应记录\r\n"</span>;</div><div class="line">    $mailTarget = <span class="keyword">$this</span>-&gt;getAreaMailer($city);</div><div class="line">    <span class="keyword">if</span> ($mailTarget) &#123;                            <span class="comment">//收件人存在</span></div><div class="line">        $mailTarget = explode(<span class="string">','</span>,$mailTarget);</div><div class="line">        $ret = Lib\Email::send($to, $title, $body, (<span class="keyword">array</span>) $mailTarget, $attachs);</div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" send mail to:&#123;$to&#125; city:&#123;$city&#125; ret:"</span> . json_encode($ret));</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//邮件发送失败的日志</span></div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" cant not found mail receiver city:&#123;$city&#125;"</span>);        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//添加error级别的日志</span></div><div class="line"><span class="keyword">if</span> ($ins-&gt;save()) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    \Phalcon\DI::getDefault()-&gt;getLog()-&gt;error(<span class="keyword">__method__</span> . <span class="string">" error with message:"</span> . $ins-&gt;getErrorAsString());</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>正常情况下Phalcon日志会自动记录时间，但是在命令行运行不会记录，如果要在命令行运行或测试代码，例如执行定时脚本任务等，可以记录时间，这样便于在出错时尽快找出原因所在。此外，如果想要日志直接在终端输出，可以在函数的第一行加上下面这种用法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">\Phalcon\DI::getDefault()-&gt;getLog()-&gt;toConsole=<span class="number">1</span>;</div></pre></td></tr></table></figure>
+<p>Phalcon日志详细用法可以参考：<a href="https://docs.phalconphp.com/zh/latest/reference/logging.html" target="_blank" rel="external">日志记录（Logging） — Phalcon 2.0.8 文档 - Phalcon PHP</a></p>
+<h2 id="3-在哪里添加日志比较合适"><a href="#3-在哪里添加日志比较合适" class="headerlink" title="3.在哪里添加日志比较合适"></a>3.在哪里添加日志比较合适</h2><p>一般来说容易出错的函数最好添加日志，便于排查问题，例如上述的发邮件函数。在开发的时候有些地方不知道是否容易出错，但是后续过程中如果出现了bug，就会知道哪些地方容易出错，可以加上日志。还是以发邮件功能为例，突然有一天南京那边的分公司说没有收到邮件，但是其它的分公司都收到了（后面发现有少数几家分公司也没有收到邮件，只是没有在意而已），经排查发现原来是生成邮件附件时出问题了，附件内容用iconv(“UTF-8”, “GB2312”, $contents)函数进行字符编码转换时$contents含有特殊字符转换失败，iconv()函数返回false，导致附件内容为空，邮件不发送，在修复了这个bug之后给iconv()函数添加了日志如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">createAttach</span><span class="params">($fileName, $contents)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (!$contents) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">    $contents = iconv(<span class="string">"UTF-8"</span>, <span class="string">"GB18030//IGNORE"</span>, $contents);  <span class="comment">//忽略特殊字符</span></div><div class="line">    <span class="keyword">if</span>($contents)&#123;</div><div class="line">        <span class="keyword">return</span> file_put_contents($fileName, $contents);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        \Phalcon\DI::getDefault()-&gt;getLog()-&gt;info(date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">" 字符编码转换失败！"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>需要注意的是file_put_contents()函数也容易出错从而返回false，因此这里选择给file_put_contents()函数添加日志也是可以的。此外在次数不是很多的循环中可以添加日志，这样可以知道每条是否执行成功。</p>
+<h2 id="4-查看日志"><a href="#4-查看日志" class="headerlink" title="4.查看日志"></a>4.查看日志</h2><p>日志一般在/tmp/或者/apps/log/文件夹里，假如我们要查看的日志文件为daily_mail.log，可以使用tail命令查看最近的日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tail -f daily_mail.log</div></pre></td></tr></table></figure>
+<p>或者先用less命令打开日志文件，再shift+g跳到日志末尾，然后用k/j进行上/下翻动：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">less daily_mail.log</div></pre></td></tr></table></figure>
+<p>如果需要查找包含特定信息的日志内容，例如查找包含南京的最近的日志，可以这样做：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tail -f daily_mail.log | grep 南京</div></pre></td></tr></table></figure>
+<p>如果需要查看所有包含南京的日志信息，可以这样做：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">less daily_mail.log | grep 南京</div></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/log/">log</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/log/">log</a><a href="/tags/Phalcon/">Phalcon</a><a href="/tags/PHP/">PHP</a><a href="/tags/linux/">linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2016/01/05/Phalcon框架中添加日志/" data-title="Phalcon框架中添加日志 | chinging" data-tsina="1469600371227" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/23/git打tag的方法和技巧/" title="git打tag的方法和技巧">
+  <strong>上一篇：</strong><br/>
+  <span>
+  git打tag的方法和技巧</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/16/灵活使用PHP和MySQL处理时间/"  title="灵活使用PHP和MySQL处理时间">
+ <strong>下一篇：</strong><br/> 
+ <span>灵活使用PHP和MySQL处理时间
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/01/05/Phalcon框架中添加日志/" data-title="Phalcon框架中添加日志" data-url="http://yoursite.com/2016/01/05/Phalcon框架中添加日志/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-在本地测试时添加日志的方法"><span class="toc-number">1.</span> <span class="toc-text">1.在本地测试时添加日志的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-在Phalcon框架下添加日志"><span class="toc-number">2.</span> <span class="toc-text">2.在Phalcon框架下添加日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-在哪里添加日志比较合适"><span class="toc-number">3.</span> <span class="toc-text">3.在哪里添加日志比较合适</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-查看日志"><span class="toc-number">4.</span> <span class="toc-text">4.查看日志</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/PHP/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/PHP/" title="PHP">PHP<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/git/" title="git">git<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/log/" title="log">log<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/system/" title="system">system<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/patch/" title="patch">patch<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/log/" title="log">log<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tag/" title="tag">tag<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/双系统/" title="双系统">双系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1469600371227&verifier=fb1431d2&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Keep calm and code on. <br/>
+			loving life,loving programming.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1469600371227" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/zuolicong" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/zuolicong" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+		<a href="mailto:zuolicong@foxmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="zuolicong">zuolicong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"zuolicong"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
