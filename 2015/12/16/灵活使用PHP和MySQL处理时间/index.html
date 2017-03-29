@@ -19,7 +19,7 @@
 <meta property="og:url" content="https://zuolicong.github.io/2015/12/16/灵活使用PHP和MySQL处理时间/index.html">
 <meta property="og:site_name" content="chinging">
 <meta property="og:description" content="MySQL时间日期数据类型 | PHP时间函数 | 时间常量 | 日期序列">
-<meta property="og:updated_time" content="2016-07-29T20:03:41.000Z">
+<meta property="og:updated_time" content="2017-03-29T12:45:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="灵活使用PHP和MySQL处理时间">
 <meta name="twitter:description" content="MySQL时间日期数据类型 | PHP时间函数 | 时间常量 | 日期序列">
@@ -99,7 +99,8 @@
 		
 		</div>
 		
-		<p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度，尤其不能受产品经理的需求影响( ´ ▽ ` )ﾉ</p>
+		<p>PHP的时间函数很多，用法也多样，而MySQL也有丰富的日期和时间类型进行相应的支持，因此在用PHP和MySQL处理时间时可以灵活一点，尽可能提高代码的可重用性和降低耦合度。</p>
+<a id="more"></a>
 <h2 id="MySQL常用的时间数据类型"><a href="#MySQL常用的时间数据类型" class="headerlink" title="MySQL常用的时间数据类型"></a>MySQL常用的时间数据类型</h2><p>在使用MySQL数据库存储时间变量时字段类型尽量使用MySQL已有的时间数据类型，更方便而且效率更高。MySQL常用的时间数据类型如下：</p>
 <table>
 <thead>
@@ -116,6 +117,11 @@
 <td>YYYY-MM-DD HH:MM:SS</td>
 </tr>
 <tr>
+<td>timestamp</td>
+<td>4 bytes</td>
+<td>YYYY-MM-DD HH:MM:SS</td>
+</tr>
+<tr>
 <td>date</td>
 <td>3 bytes</td>
 <td>YYYY-MM-DD</td>
@@ -127,20 +133,15 @@
 </tr>
 </tbody>
 </table>
-<a id="more"></a>
-<p>一般来说，如果需要在数据库存储时间信息，最好把日期和具体时间都纪录下来，即使产品经理提的需求只是日期或者具体时间，以防后面会用到，比如说按时间排序，或者需要以时间为条件查找某些数据，因此最好使用datetime数据类型或者date和time数据类型的结合。建表代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">create table table_name (</div><div class="line">  `create_time` datetime default NULL</div><div class="line">);</div></pre></td></tr></table></figure>
-<p>或者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">create table table_name (</div><div class="line">  `create_date` date default NULL,</div><div class="line">  `create_time` time default NULL</div><div class="line">);</div></pre></td></tr></table></figure></p>
+<p>一般来说，如果需要在数据库存储时间信息，最好把日期和具体时间都纪录下来，即使产品经理提的需求只是日期或者具体时间，以防后面会用到，比如说按时间排序，或者需要以时间为条件查找某些数据，因此最好使用datetime数据类型或者timestamp。代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT &apos;创建时间&apos;</div></pre></td></tr></table></figure>
 <h2 id="灵活使用PHP时间函数"><a href="#灵活使用PHP时间函数" class="headerlink" title="灵活使用PHP时间函数"></a>灵活使用PHP时间函数</h2><p>有时候产品经理提的需求可能不需要显示完整的日期或者时间信息，比如”11-26 10:00:01”的时间格式，我们在MySQL数据库中存储时间数据时是不是就不能用时间数据类型了呢，而是改用字符串类型等等？大可不必，还是可以用，后面需要显示什么样的时间格式可以由PHP时间函数来完成，譬如显示”11-26 10:00:01”的时间格式可以这样做：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$time = date(<span class="string">'m-d H:i:s'</span>,strtotime($datetime));</div></pre></td></tr></table></figure>
-<p>此外还有以下可能用到的格式也是可以正常输出的：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$time = date(<span class="string">'m-d H:i'</span>,strtotime($datetime));</div><div class="line">$time = date(<span class="string">'Y-m-d H:i'</span>,strtotime($datetime));</div><div class="line">$time = date(<span class="string">'Y-m-d H:i:s'</span>,strtotime($datetime));</div></pre></td></tr></table></figure>
-<p>但是类似下面这种前面显示日期，后面显示分和秒经测试是不能正常输出的：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$time = date(<span class="string">'m-d i:s'</span>,strtotime($datetime));</div></pre></td></tr></table></figure>
 <h2 id="将时间变量设为常量以提高代码的可重用性"><a href="#将时间变量设为常量以提高代码的可重用性" class="headerlink" title="将时间变量设为常量以提高代码的可重用性"></a>将时间变量设为常量以提高代码的可重用性</h2><p>当然不只是时间变量，只要是用的多的变量都应该设置成常量，要修改只需要修改常量的值即可，而不需要修改所有用到这些变量的代码。我最近写了一个<a href="http://www.genshuixue.com/activity/aishihengen" target="_blank" rel="external">爱视恒恩免费录课活动</a>的后台，因为该活动分为几期进行，我写的第一期，为了提高代码可重用性，将活动开始时间和结束时间等时间变量都设为常量，后面几期活动只需要修改活动开始时间和结束时间即可，其它代码都可以直接搬过来用了。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> START_TIME = <span class="string">'2015-11-28 10:00:00'</span>;          <span class="comment">//活动开始时间</span></div><div class="line"><span class="keyword">const</span> END_TIME = <span class="string">'2015-12-06 23:59:59'</span>;            <span class="comment">//活动结束时间</span></div><div class="line"><span class="keyword">const</span> EVERYDAY_TIME = <span class="string">'10:00:00'</span>;                  <span class="comment">//活动期间每天的开始时间</span></div><div class="line"></div><div class="line">$start_time = date(<span class="string">'Y-m-d'</span>).<span class="string">" "</span>.(<span class="keyword">self</span>::EVERYDAY_TIME);  <span class="comment">//活动期间每天完整的开始时间</span></div><div class="line">$time = time();</div><div class="line"><span class="keyword">if</span>($time&lt;strtotime(<span class="keyword">self</span>::START_TIME))&#123;</div><div class="line">    $join_status = <span class="number">1</span>;                          <span class="comment">//未到活动开始日期</span></div><div class="line">&#125; <span class="keyword">elseif</span>($time&gt;strtotime(<span class="keyword">self</span>::END_TIME))&#123;</div><div class="line">    $join_status = <span class="number">2</span>;                          <span class="comment">//活动已经结束</span></div><div class="line">&#125; <span class="keyword">elseif</span>($time&lt;strtotime($start_time))&#123;</div><div class="line">    $join_status = <span class="number">7</span>;                          <span class="comment">//在活动期间，但是没到当天的开始时间</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="获取起始日期和结束日期的日期序列"><a href="#获取起始日期和结束日期的日期序列" class="headerlink" title="获取起始日期和结束日期的日期序列"></a>获取起始日期和结束日期的日期序列</h2><p>因为在开发过程中需要按天来取数据库中的数据，因此需要获取从起始日期到结束日期的日期序列，我最开始的做法是直接计算总天数，然后将intval(date(‘d’))加一，这样在下个月的时候intval(date(‘d’))与这个月的intval(date(‘d’))不连续，还要进行判断，代码的耦合度很高，不利于重复利用，在看到公司大牛是如何处理这一问题时我才发现我图样图森破，下面贴出大牛的代码方便以后借鉴和学习：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getDateSeq</span><span class="params">($start_date, $end_date)</span> </span>&#123;</div><div class="line">    $te = strtotime($end_date);</div><div class="line">    $ts = strtotime($start_date);</div><div class="line">    <span class="keyword">if</span> ($te &lt; $ts) &#123; <span class="comment">//如果结束日期小于起始日期，则交换</span></div><div class="line">        $tmp = $ts;</div><div class="line">        $ts = $te;</div><div class="line">        $te = $tmp;</div><div class="line">    &#125;</div><div class="line">    $seq = [];</div><div class="line">    <span class="keyword">for</span> ($i = $ts; $i &lt;= $te;) &#123;</div><div class="line">        $currDate = date(<span class="string">'Y-m-d'</span>, $i);</div><div class="line">        $i = strtotime(<span class="string">"+1 day &#123;$currDate&#125;"</span>); <span class="comment">//i自一天</span></div><div class="line">        $seq[] = $currDate;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $seq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="获取起始日期和结束日期的日期序列"><a href="#获取起始日期和结束日期的日期序列" class="headerlink" title="获取起始日期和结束日期的日期序列"></a>获取起始日期和结束日期的日期序列</h2><p>因为在开发过程中需要按天来取数据库中的数据，因此需要获取从起始日期到结束日期的日期序列，我最开始的做法是直接计算总天数，然后将intval(date(‘d’))加一，这样在下个月的时候intval(date(‘d’))与这个月的intval(date(‘d’))不连续，还要进行判断，代码的耦合度很高，不利于重复利用，正确的姿势应该是这样：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getDateSeq</span><span class="params">($start_date, $end_date)</span> </span>&#123;</div><div class="line">    $te = strtotime($end_date);</div><div class="line">    $ts = strtotime($start_date);</div><div class="line">    <span class="keyword">if</span> ($te &lt; $ts) &#123; <span class="comment">//如果结束日期小于起始日期，则交换</span></div><div class="line">        $tmp = $ts;</div><div class="line">        $ts = $te;</div><div class="line">        $te = $tmp;</div><div class="line">    &#125;</div><div class="line">    $seq = [];</div><div class="line">    <span class="keyword">for</span> ($i = $ts; $i &lt;= $te;) &#123;</div><div class="line">        $currDate = date(<span class="string">'Y-m-d'</span>, $i);</div><div class="line">        $i = strtotime(<span class="string">"+1 day &#123;$currDate&#125;"</span>); <span class="comment">//i自增一天</span></div><div class="line">        $seq[] = $currDate;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $seq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>或者使用PHP自带的时间类：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getDateRange</span><span class="params">($start_date, $end_date, $format = <span class="string">'Y-m-d'</span>)</span> </span>&#123;</div><div class="line">    $begin = <span class="keyword">new</span> \DateTime($start_date);</div><div class="line">    $end = <span class="keyword">new</span> \DateTime($end_date);</div><div class="line">    $end-&gt;modify(<span class="string">'+1 day'</span>);  <span class="comment">// 这个period不包含结束时间</span></div><div class="line">    $interval = <span class="keyword">new</span> \DateInterval(<span class="string">'P1D'</span>);</div><div class="line">    $date_range = <span class="keyword">new</span> \DatePeriod($begin, $interval, $end);</div><div class="line">    $range = [];</div><div class="line">    <span class="keyword">foreach</span> ($date_range <span class="keyword">as</span> $date) &#123;</div><div class="line">        $range[] = $date-&gt;format($format);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $range;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -220,11 +221,11 @@
 		  
 		
 		  
-			<li><a href="/categories/git/" title="git">git<sup>1</sup></a></li>
+			<li><a href="/categories/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
 		  
 		
 		  
-			<li><a href="/categories/log/" title="log">log<sup>1</sup></a></li>
+			<li><a href="/categories/git/" title="git">git<sup>1</sup></a></li>
 		  
 		
 		  
@@ -249,7 +250,7 @@
 			
 		
 			
-				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
 			
 		
 			
@@ -261,11 +262,11 @@
 			
 		
 			
-				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>1</sup></a></li>
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
 			
@@ -282,14 +283,6 @@
 		
 			
 				<li><a href="/tags/双系统/" title="双系统">双系统<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/thoughts/" title="thoughts">thoughts<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/summary/" title="summary">summary<sup>1</sup></a></li>
 			
 		
 		</ul>
