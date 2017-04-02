@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/curl%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9E%9C.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%A8%A1%E5%9E%8B%E5%B1%9E%E6%80%A7%E5%80%BC.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%9C.png">
-<meta property="og:updated_time" content="2017-04-02T12:28:14.000Z">
+<meta property="og:updated_time" content="2017-04-02T16:51:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨">
 <meta name="twitter:description" content="使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。">
@@ -52,7 +52,7 @@
 				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
 				<h2 class="blog-motto">左礼聪的博客</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -68,7 +68,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
 					</form>
 					
 					</li>
@@ -90,14 +90,14 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2017-01-25T11:50:22.000Z" itemprop="datePublished"> 发表于 2017-01-25</time>
+    <time datetime="2017-01-25T11:50:22.000Z" itemprop="datePublished"> Published 2017-01-25</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
+			<strong class="toc-title">Contents</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题复现"><span class="toc-number">1.</span> <span class="toc-text">问题复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用psysh进行逐步操作以分析问题"><span class="toc-number">2.</span> <span class="toc-text">使用psysh进行逐步操作以分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方案"><span class="toc-number">3.</span> <span class="toc-text">解决方案</span></a></li></ol>
 		
@@ -111,9 +111,9 @@
 <p>通过curl请求<a href="http://phalcon.zuolicong.com/product/create" target="_blank" rel="external">http://phalcon.zuolicong.com/product/create</a> 接口(我在本地把该项目的hosts设置成了phalcon.zuolicong.com)，命令如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -i -d &quot;name=computer&amp;price=6000.00&amp;quantity=2017&quot; http://phalcon.zuolicong.com/product/create</div></pre></td></tr></table></figure></p>
 <p>请求成功，查看数据库结果如下：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/curl%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9E%9C.png" alt="curl请求结果"></p>
 <p>没有传type、status、provider三个字段，但是数据库里保存的却不是这三个字段的默认值，这是怎么回事？</p>
-<h2 id="使用psysh进行逐步操作以分析问题"><a href="#使用psysh进行逐步操作以分析问题" class="headerlink" title="使用psysh进行逐步操作以分析问题"></a>使用psysh进行逐步操作以分析问题</h2><p>使用psysh引入该项目的入口文件，直接通过Product Model进行逐步操作复现问题。先实例化一个Product，并对type、status、provider三个字段进行赋值，然后进行第一次save()操作，操作之后该实例各字段的值如下：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%A8%A1%E5%9E%8B%E5%B1%9E%E6%80%A7%E5%80%BC.png" alt="psysh第一次保存后模型属性值"></p>
-<p>发现第一次save()操作后type、status、provider三个字段的值都是null!，此时数据库里的结果如下:<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%9C.png" alt="psysh第一次保存后数据库结果"></p>
-<p>可以看出第一次save()之后type、status、provider三个字段保存的都是默认值，那么问题应该就是出在第二次save()之后了。此时对该实例的pid字段进行赋值之后再进行第二次save()操作，果然这三个字段的值分别变成了0、NULL和空字符串。此时问题就明朗了，第一次save()之后实例未被赋值的字段默认为null，如果再进行一次save()操作，相当于update()操作，由于type和provider设置了NOT NULL，更新为null值时MySQL会自动进行转换(此时MySQL的sql_mode不能设为STRICT_TRANS_TABLES，否则将不会进行转换，而是直接中止操作，参考<a href="http://keithlan.github.io/2015/07/14/mysql_error_1048/" target="_blank" rel="external">http://keithlan.github.io/2015/07/14/mysql_error_1048/</a> 和 <a href="http://xstarcd.github.io/wiki/MySQL/MySQL-sql-mode.html" target="_blank" rel="external">http://xstarcd.github.io/wiki/MySQL/MySQL-sql-mode.html</a> )，整型会转成0，字符串类型则转成空字符串(和null是有区别的)，实际上timestamp类型也会转成操作的当前时间，这点从create_time字段上就可以看出来，此外，如果将NULL插入具有AUTO_INCREMENT属性的整数列，将插入序列中的下一个编号。 而status没有设定NOT NULL，直接更新为null。</p>
+<h2 id="使用psysh进行逐步操作以分析问题"><a href="#使用psysh进行逐步操作以分析问题" class="headerlink" title="使用psysh进行逐步操作以分析问题"></a>使用psysh进行逐步操作以分析问题</h2><p>使用psysh引入该项目的入口文件，直接通过Product Model进行逐步操作复现问题。先实例化一个Product，并对type、status、provider三个字段进行赋值，然后进行第一次save()操作，操作之后发现第一次save()操作后type、status、provider三个字段的值都是null：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%A8%A1%E5%9E%8B%E5%B1%9E%E6%80%A7%E5%80%BC.png" alt="psysh第一次保存后模型属性值"></p>
+<p>此时数据库里的结果如下:<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%9C.png" alt="psysh第一次保存后数据库结果"></p>
+<p>可以看出第一次save()之后type、status、provider三个字段保存的都是默认值，那么问题应该就是出在第二次save()之后了。此时对该实例的pid字段进行赋值之后再进行第二次save()操作，果然这三个字段的值分别变成了0、NULL和空字符串。此时问题就明朗了，第一次save()之后实例未被赋值的字段默认为null，如果再进行一次save()操作（相当于update操作），由于type和provider设置了NOT NULL，更新为null值时MySQL会自动进行转换(此时MySQL的sql_mode不能设为STRICT_TRANS_TABLES，否则将不会进行转换，而是直接中止操作，参考<a href="http://keithlan.github.io/2015/07/14/mysql_error_1048/" target="_blank" rel="external">http://keithlan.github.io/2015/07/14/mysql_error_1048/</a> 和 <a href="http://xstarcd.github.io/wiki/MySQL/MySQL-sql-mode.html" target="_blank" rel="external">http://xstarcd.github.io/wiki/MySQL/MySQL-sql-mode.html</a> )，整型会转成0，字符串类型则转成空字符串(和null是有区别的)，实际上timestamp类型也会转成操作的当前时间，这点从create_time字段上就可以看出来，此外，如果将NULL插入具有AUTO_INCREMENT属性的整数列，将插入序列中的下一个编号。 而status没有设定NOT NULL，直接更新为null。</p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>知道了原因出在实例第一次save()之后没有被赋值的字段默认为null，想到了两个解决方案如下：</p>
 <ol>
 <li><p>首先想到的方案就是在第二次进行save()更新操作之前把未赋值的且数据库设置了非0或非空默认值的字段手动赋为默认值，这种方案虽然可行，但是比较麻烦，并且在代码层面赋了默认值，数据库设置的默认值就没有意义了;</p>
@@ -176,22 +176,22 @@
 
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
+  <strong class="toc-title">Contents</strong>
  
  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题复现"><span class="toc-number">1.</span> <span class="toc-text">问题复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用psysh进行逐步操作以分析问题"><span class="toc-number">2.</span> <span class="toc-text">使用psysh进行逐步操作以分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方案"><span class="toc-number">3.</span> <span class="toc-text">解决方案</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分类</p>
+	<p class="asidetitle">Categories</p>
 		<ul>
 		
 		  
@@ -220,7 +220,7 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">标签</p>
+	<p class="asidetitle">Tags</p>
 		<ul class="clearfix">
 		
 			
@@ -256,7 +256,7 @@
 
 
   <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
+  <p class="asidetitle">Links</p>
     <ul>
         
           <li>
@@ -276,7 +276,7 @@
 
   
 <div class="github-card">
-<p class="asidetitle">Github 名片</p>
+<p class="asidetitle">Github Card</p>
 <div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
 <script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
@@ -524,7 +524,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
