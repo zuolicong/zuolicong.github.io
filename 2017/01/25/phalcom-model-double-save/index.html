@@ -16,13 +16,13 @@
     <meta name="description" content="使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨">
-<meta property="og:url" content="https://zuolicong.github.io/2017/01/25/Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨/index.html">
+<meta property="og:url" content="https://zuolicong.github.io/2017/01/25/phalcom-model-double-save/index.html">
 <meta property="og:site_name" content="chinging">
 <meta property="og:description" content="使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/curl%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9E%9C.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%A8%A1%E5%9E%8B%E5%B1%9E%E6%80%A7%E5%80%BC.png">
 <meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/Phalcon%E6%A1%86%E6%9E%B6%E7%9A%84Model%E4%B8%8D%E8%83%BD%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9D%9E0%E6%88%96%E9%9D%9E%E7%A9%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%BB%98%E8%AE%A4%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E6%8E%A2%E8%AE%A8/psysh%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%9D%E5%AD%98%E5%90%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%9C.png">
-<meta property="og:updated_time" content="2017-04-02T16:56:50.000Z">
+<meta property="og:updated_time" content="2017-04-08T18:14:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨">
 <meta name="twitter:description" content="使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。">
@@ -83,7 +83,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2017/01/25/Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨/" title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨" itemprop="url">Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨</a>
+      <a href="/2017/01/25/phalcom-model-double-save/" title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨" itemprop="url">Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨</a>
   </h1>
   <p class="article-author">By
        
@@ -146,7 +146,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://zuolicong.github.io/2017/01/25/Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨/" data-title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨 | chinging" data-tsina="null" class="share clearfix">
+	  <div data-url="https://zuolicong.github.io/2017/01/25/phalcom-model-double-save/" data-title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨 | chinging" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -160,7 +160,7 @@
  
 
 <div class="next">
-<a href="/2016/03/02/windows系统下通过EasyBCD引导安装Ubuntu14-04/"  title="windows系统下通过EasyBCD引导安装Ubuntu14.04">
+<a href="/2016/03/02/windows-ubuntu/"  title="windows系统下通过EasyBCD引导安装Ubuntu14.04">
  <strong>下一篇：</strong><br/> 
  <span>windows系统下通过EasyBCD引导安装Ubuntu14.04
 </span>
@@ -171,7 +171,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2017/01/25/Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨/" data-title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨" data-url="https://zuolicong.github.io/2017/01/25/Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨/"></div>
+	<div class="ds-thread" data-thread-key="2017/01/25/phalcom-model-double-save/" data-title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨" data-url="https://zuolicong.github.io/2017/01/25/phalcom-model-double-save/"></div>
 </section>
 
 
