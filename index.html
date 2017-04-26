@@ -47,7 +47,7 @@
 				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
 				<h2 class="blog-motto">左礼聪的博客</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -63,7 +63,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
 					</form>
 					
 					</li>
@@ -80,6 +80,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/04/26/im-redis-to-codis/" title="IM系统redis迁移到codis实践" itemprop="url">IM系统redis迁移到codis实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-26T14:42:30.000Z" itemprop="datePublished"> 發表於 2017-04-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人、最近一条消息、未读消息数、黑名单、频率及敏感词限制、Token等，而消息拉链、最近一条消息和未读消息数是进行持久存储的，因此这些数据需要进行迁移。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2017/04/26/im-redis-to-codis/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Redis/">Redis</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a><a href="/tags/Codis/">Codis</a><a href="/tags/PHP/">PHP</a><a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/04/26/im-redis-to-codis/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/04/26/im-redis-to-codis/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/04/10/php-merge-k-sorted-array/" title="利用堆排序合并k个有序数组的PHP实现" itemprop="url">利用堆排序合并k个有序数组的PHP实现</a>
   </h1>
   <p class="article-author">By
@@ -87,7 +150,7 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2017-04-09T18:08:32.000Z" itemprop="datePublished"> Published 2017-04-10</time>
+    <time datetime="2017-04-09T18:08:32.000Z" itemprop="datePublished"> 發表於 2017-04-10</time>
     
   </p>
 </header>
@@ -150,7 +213,7 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2017-01-25T11:50:22.000Z" itemprop="datePublished"> Published 2017-01-25</time>
+    <time datetime="2017-01-25T11:50:22.000Z" itemprop="datePublished"> 發表於 2017-01-25</time>
     
   </p>
 </header>
@@ -213,7 +276,7 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2016-03-02T14:54:56.000Z" itemprop="datePublished"> Published 2016-03-02</time>
+    <time datetime="2016-03-02T14:54:56.000Z" itemprop="datePublished"> 發表於 2016-03-02</time>
     
   </p>
 </header>
@@ -282,7 +345,7 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2016-01-23T12:51:42.000Z" itemprop="datePublished"> Published 2016-01-23</time>
+    <time datetime="2016-01-23T12:51:42.000Z" itemprop="datePublished"> 發表於 2016-01-23</time>
     
   </p>
 </header>
@@ -334,84 +397,21 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/01/05/phalcon-log/" title="Phalcon框架中添加日志" itemprop="url">Phalcon框架中添加日志</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
-		
-  <p class="article-time">
-    <time datetime="2016-01-05T03:20:54.000Z" itemprop="datePublished"> Published 2016-01-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>日志可以在程序出现bug时帮助排查问题，如果没有日志在解决bug时很可能无从下手。这两天修改了一个发邮件的功能，期间在自测代码的时候对日志接触的比较多，也意识到其重要性，在这里小结一下。由于公司使用的是Phalcon框架，因此这篇文章主要说说在Phalcon框架下添加日志。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/01/05/phalcon-log/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Phalcon/">Phalcon</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Phalcon/">Phalcon</a><a href="/tags/PHP/">PHP</a><a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/01/05/phalcon-log/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/01/05/phalcon-log/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分類</p>
 		<ul>
 		
 		  
@@ -435,6 +435,10 @@
 		  
 		
 		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+		  
+		
+		  
 			<li><a href="/categories/System/" title="System">System<sup>1</sup></a></li>
 		  
 		
@@ -444,19 +448,19 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">標簽</p>
 		<ul class="clearfix">
 		
 			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
 			
 		
 			
@@ -468,11 +472,15 @@
 			
 		
 			
-				<li><a href="/tags/ORM/" title="ORM">ORM<sup>1</sup></a></li>
+				<li><a href="/tags/Codis/" title="Codis">Codis<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ORM/" title="ORM">ORM<sup>1</sup></a></li>
 			
 		
 			
@@ -483,12 +491,16 @@
 				<li><a href="/tags/HeapSort/" title="HeapSort">HeapSort<sup>1</sup></a></li>
 			
 		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
 		</ul>
 </div>
 
 
   <div class="linkslist">
-  <p class="asidetitle">Links</p>
+  <p class="asidetitle">友情鏈接</p>
     <ul>
         
           <li>
@@ -508,7 +520,7 @@
 
   
 <div class="github-card">
-<p class="asidetitle">Github Card</p>
+<p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
 <script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
@@ -667,7 +679,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

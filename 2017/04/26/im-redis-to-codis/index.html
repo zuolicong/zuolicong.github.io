@@ -1,0 +1,577 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IM系统redis迁移到codis实践 | chinging</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="zuolicong">
+    
+
+    
+
+    
+    <meta name="description" content="公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IM系统redis迁移到codis实践">
+<meta property="og:url" content="https://zuolicong.github.io/2017/04/26/im-redis-to-codis/index.html">
+<meta property="og:site_name" content="chinging">
+<meta property="og:description" content="公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/df%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/segmentation_fault.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/slow_query.png">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/read_error_on_connection.png">
+<meta property="og:updated_time" content="2017-04-26T19:17:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IM系统redis迁移到codis实践">
+<meta name="twitter:description" content="公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人">
+<meta name="twitter:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/df%E7%BB%93%E6%9E%9C.png">
+
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/chinging.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/chinging.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="chinging" title="chinging"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
+				<h2 class="blog-motto">左礼聪的博客</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/26/im-redis-to-codis/" title="IM系统redis迁移到codis实践" itemprop="url">IM系统redis迁移到codis实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-26T14:42:30.000Z" itemprop="datePublished"> 發表於 2017-04-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案"><span class="toc-number">1.</span> <span class="toc-text">方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题及解决方法"><span class="toc-number">2.</span> <span class="toc-text">遇到的问题及解决方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关代码"><span class="toc-number">3.</span> <span class="toc-text">相关代码</span></a></li></ol>
+		
+		</div>
+		
+		<p>公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人、最近一条消息、未读消息数、黑名单、频率及敏感词限制、Token等，而消息拉链、最近一条消息和未读消息数是进行持久存储的，因此这些数据需要进行迁移。</p>
+<a id="more"></a>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>为了不影响用户的使用，代码上线定在凌晨一点。数据迁移到codis的同时还要修改key，因此不能直接使用redis-port等工具将旧的redis里面的数据同步到新的codis集群，最终决定写脚本进行数据迁移。先使用keys命令模糊匹配出旧redis里的所有key，取出数据然后设置新的key批量保存到codis集群中。消息拉链的数据量很大，可以先进行一次全量的数据迁移，代码上线之前再进行一次增量数据迁移。最近一条消息和未读消息数数据时效性比较大，也在代码上线前进行同步。具体步骤如下：</p>
+<ul>
+<li>将代码中记录redis key的常量文件备份一份，将原来的key修改成规范形式，并添加codis的配置文件及连接方法，写脚本通过备份的redis key文件从旧数据库读数据，然后批量写入codis集群；</li>
+<li>在beta机器上跑脚本全量迁移消息拉链数据；</li>
+<li>上线前IM系统停止服务，避免在上线过程中有数据写入；</li>
+<li>从MySQL数据库取出全量迁移消息拉链之后新增的数据，添加到codis，并迁移最近一条消息和未读消息数的数据；</li>
+<li>通过查看日志、自测等方法验证数据迁移是否成功；</li>
+<li>代码上线；</li>
+<li>QA进行回归测试</li>
+</ul>
+<h2 id="遇到的问题及解决方法"><a href="#遇到的问题及解决方法" class="headerlink" title="遇到的问题及解决方法"></a>遇到的问题及解决方法</h2><ol>
+<li><p>数据迁移脚本运行时间很长(全量迁移消息拉链的脚本运行了5个小时左右)，如果直接运行脚本，断网或者终端与服务器连接断开会导致脚本停止运行<br>解决方法：使用nohup在后台运行脚本，如下所示，并且在退出服务器时要通过exit命令退出，不能直接关掉，否则进程也会中止。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nohup php cli.php redis_migrate migrateTotal &amp;&gt;&gt; /apps2/tmp/im/redis_migrate_migrateTotal.log 2&gt;&amp;1 &amp;</div></pre></td></tr></table></figure>
+</li>
+<li><p>日志文件太大（最大的一个有1.8G），beta机器的一个磁盘打满了，导致进程结束<br>解决方法：通过df命令查看磁盘空间使用情况，选择剩余空间比较大的磁盘打日志，这里选择/dev/xvdc1，即/apps2文件夹下面。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/df%E7%BB%93%E6%9E%9C.png" alt="df结果"></p>
+</li>
+<li><p>一次mset太多键值对数据，报Segmentation fault，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/segmentation_fault.png" alt="Segmentation fault"><br>解决方法：先对数据进行分组，如5000个键值对为一组，然后循环进行mset，代码见第三部分。</p>
+</li>
+<li><p>从MySQL数据库查消息拉链的增量数据，报timeout exception，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/slow_query.png" alt="slow query"><br>根据日志可以看出这是一个慢查询，sql语句如下，查看表结构发现update_time字段没有建索引，所以查询慢，而另外一个字段create_time建了联合索引，根据最左前缀法则，使用create_time代替update_time将用到索引，问题得到解决。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 慢查询sql</span></div><div class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> im_message_info_single <span class="keyword">WHERE</span> update_time &gt; <span class="string">"2017-04-25 23:07:51"</span>;</div><div class="line"></div><div class="line"><span class="comment">-- create_time和sender_r字段建立的联合索引</span></div><div class="line">KEY `idx_createtime_send_r` (`create_time`,`sender_r`)</div><div class="line"></div><div class="line"><span class="comment">-- 优化之后的sql</span></div><div class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> im_message_info_single <span class="keyword">WHERE</span> create_time &gt; <span class="string">"2017-04-25 23:07:51"</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用keys命令获取所有用户一对一聊天未读消息数的key时，redis报”read error on connection”错误，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/read_error_on_connection.png" alt="read error on connection"><br>google了一下发现是数据量太大，读取超时的原因，通过setOption命令设置不超时解决，参见：<a href="https://nil.sh/RedisException-with-message-read-error-on-connection.html" target="_blank" rel="external">https://nil.sh/RedisException-with-message-read-error-on-connection.html</a></p>
+</li>
+<li><p>迁完之后发现codis里找不到数据，可能是db不对，默认是db 0，通过select命令选择数据所在db之后再查看。</p>
+</li>
+</ol>
+<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>所有业务的消息拉链都是采用sorted set结构，所有业务的最后一条消息都是采用string结构，社区、考研、金囿、群组这几个业务的未读消息数采用hash结构，系统未读消息采用sorted set结构，一对一聊天的未读消息数采用string结构，sorted set、string和hash这三种结构的数据分别先通过keys命令获取保存所有key的数组，然后调用以下函数（略去Action函数）将数据迁移到codis。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">RedisMigrateTask</span> <span class="keyword">extends</span> \<span class="title">Phalcon</span>\<span class="title">Cli</span>\<span class="title">Task</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">const</span> CHUNK_SIZE = <span class="number">5000</span>;    <span class="comment">// 数据分组大小</span></div><div class="line"></div><div class="line">    <span class="keyword">public</span> $redisInstance = <span class="keyword">null</span>;    <span class="comment">// redis实例</span></div><div class="line">    <span class="keyword">public</span> $codisInstance = <span class="keyword">null</span>;    <span class="comment">// codis实例</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 批量迁移sorted set数据</div><div class="line">     * <span class="doctag">@param</span> $oldKeys array 存储旧key的数组</div><div class="line">     * <span class="doctag">@param</span> $oldPrefix string 旧key前缀</div><div class="line">     * <span class="doctag">@param</span> $newPrefix string 新key前缀</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateSortedSetData</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</div><div class="line">            <span class="keyword">foreach</span> ($oldKeys <span class="keyword">as</span> $oldKey) &#123;</div><div class="line">                $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</div><div class="line">                $sortedSetData = <span class="keyword">$this</span>-&gt;redisInstance-&gt;zRange($oldKey, <span class="number">0</span>, <span class="number">-1</span>, <span class="keyword">true</span>);</div><div class="line">                $items = [];</div><div class="line">                $logArr = [];</div><div class="line">                <span class="keyword">foreach</span> ($sortedSetData <span class="keyword">as</span> $val =&gt; $score) &#123;</div><div class="line">                    $items[] = $score;</div><div class="line">                    $items[] = $val;</div><div class="line">                    $logArr[] = $score . <span class="string">':'</span> . $val;</div><div class="line">                &#125;</div><div class="line">                array_unshift($items, $newKey);</div><div class="line">                $num = call_user_func_array([<span class="keyword">$this</span>-&gt;codisInstance, <span class="string">'zAdd'</span>], $items);    <span class="comment">// 添加成功个数</span></div><div class="line">                <span class="keyword">if</span> ($num === <span class="keyword">false</span>) &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] failed to migrate to codis! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</div><div class="line">                &#125; <span class="keyword">elseif</span> ($num == <span class="number">0</span>) &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] has existed and is the same! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] with &#123;$num&#125; values was migrated to codis successfully! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 分组批量迁移string数据。数据太多全量用mset会报Segmentation fault, 分组mget, mset</div><div class="line">     * <span class="doctag">@param</span> $oldKeys</div><div class="line">     * <span class="doctag">@param</span> $oldPrefix</div><div class="line">     * <span class="doctag">@param</span> $newPrefix</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateKvDataChunk</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</div><div class="line">            $oldKeysChunk = array_chunk($oldKeys, <span class="keyword">self</span>::CHUNK_SIZE);</div><div class="line">            <span class="keyword">foreach</span> ($oldKeysChunk <span class="keyword">as</span> $oldkeysGroup) &#123;</div><div class="line">                $valuesGroup = <span class="keyword">$this</span>-&gt;redisInstance-&gt;mget($oldkeysGroup);</div><div class="line">                $valuesGroupAssoc = [];</div><div class="line">                <span class="keyword">foreach</span> ($oldkeysGroup <span class="keyword">as</span> $idx =&gt; $oldKey) &#123;</div><div class="line">                    $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</div><div class="line">                    $valuesGroupAssoc[$newKey] = $valuesGroup[$idx];</div><div class="line">                &#125;</div><div class="line">                $ret = <span class="keyword">$this</span>-&gt;codisInstance-&gt;mset($valuesGroupAssoc);    <span class="comment">// bool值</span></div><div class="line">                <span class="keyword">if</span> ($ret) &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old kvs was migrated to codis successfully! old keys: "</span> . join(<span class="string">','</span>, $oldkeysGroup) . PHP_EOL;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old kvs failed to migrate to codis! old keys: "</span> . join(<span class="string">','</span>, $oldkeysGroup) . PHP_EOL;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 批量迁移hash数据</div><div class="line">     * <span class="doctag">@param</span> $oldKeys</div><div class="line">     * <span class="doctag">@param</span> $oldPrefix</div><div class="line">     * <span class="doctag">@param</span> $newPrefix</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateHashData</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</div><div class="line">            <span class="keyword">foreach</span> ($oldKeys <span class="keyword">as</span> $oldKey) &#123;</div><div class="line">                $hashData = <span class="keyword">$this</span>-&gt;redisInstance-&gt;hGetAll($oldKey);</div><div class="line">                $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</div><div class="line">                $ret = <span class="keyword">$this</span>-&gt;codisInstance-&gt;hMset($newKey, $hashData);    <span class="comment">// bool值</span></div><div class="line">                $logArr = [];</div><div class="line">                <span class="keyword">foreach</span> ($hashData <span class="keyword">as</span> $hashKey =&gt; $hashVal) &#123;</div><div class="line">                    $logArr[] = $hashKey . <span class="string">':'</span> . $hashVal;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> ($ret) &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old hash key [&#123;$oldKey&#125;] was migrated to codis successfully! old hash data: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old hash key [&#123;$oldKey&#125;] failed to migrate to codis! old hash data: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 生成新的key</div><div class="line">     * <span class="doctag">@param</span> $oldKey string 旧redis的key</div><div class="line">     * <span class="doctag">@param</span> $oldPrefix string 旧key前缀</div><div class="line">     * <span class="doctag">@param</span> $newPrefix string 新key前缀</div><div class="line">     * <span class="doctag">@return</span> string</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getNewKey</span><span class="params">($oldKey, $oldPrefix, $newPrefix)</span> </span>&#123;</div><div class="line">        $offset = strlen($oldPrefix);</div><div class="line">        $suffix = substr($oldKey, $offset);</div><div class="line">        $newKey = $newPrefix . $suffix;</div><div class="line">        <span class="keyword">return</span> $newKey;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Redis/">Redis</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a><a href="/tags/Codis/">Codis</a><a href="/tags/PHP/">PHP</a><a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://zuolicong.github.io/2017/04/26/im-redis-to-codis/" data-title="IM系统redis迁移到codis实践 | chinging" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/04/10/php-merge-k-sorted-array/"  title="利用堆排序合并k个有序数组的PHP实现">
+ <strong>下一篇：</strong><br/> 
+ <span>利用堆排序合并k个有序数组的PHP实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/04/26/im-redis-to-codis/" data-title="IM系统redis迁移到codis实践" data-url="https://zuolicong.github.io/2017/04/26/im-redis-to-codis/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案"><span class="toc-number">1.</span> <span class="toc-text">方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题及解决方法"><span class="toc-number">2.</span> <span class="toc-text">遇到的问题及解决方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关代码"><span class="toc-number">3.</span> <span class="toc-text">相关代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/DataStructure/" title="DataStructure">DataStructure<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/PHP/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/PHP/" title="PHP">PHP<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Phalcon/" title="Phalcon">Phalcon<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System/" title="System">System<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Phalcon/" title="Phalcon">Phalcon<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Codis/" title="Codis">Codis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ORM/" title="ORM">ORM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataStructure/" title="DataStructure">DataStructure<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HeapSort/" title="HeapSort">HeapSort<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.genshuixue.com" target="_blank" title="找好老师">跟谁学</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://weibo.com/u/2967430153" target="_blank" title="My Weibo">My Weibo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Keep calm and code on. <br/>
+			loving life,loving programming.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/zuolicong" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		<a href="https://www.facebook.com/neo.zuo.7" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/chinging-59" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:neo@zuoli.co" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 - 2017
+		
+		<a href="/about" target="_blank" title="zuolicong">zuolicong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"zuolicong"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?db7e04265e49ae4dcb50c5ccfaf138a9";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
