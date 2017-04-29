@@ -219,7 +219,7 @@
 </header>
     <div class="article-content">
         
-        <p>使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。</p>
+        <p>使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作(第二次操作需要用到第一次生成的id，所以不能合并成一次，本文中是pid字段是根据id字段生成的，确保二者的一一对应关系)，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。</p>
         
         
         <p class="article-more-link">
@@ -480,11 +480,11 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>1</sup></a></li>
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>1</sup></a></li>
 			
 		
 			
