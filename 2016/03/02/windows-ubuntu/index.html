@@ -14,6 +14,7 @@
 
     
     <meta name="description" content="双系统 | Ubuntu | EasyBCD">
+<meta name="keywords" content="Linux,Ubuntu">
 <meta property="og:type" content="article">
 <meta property="og:title" content="windows系统下通过EasyBCD引导安装Ubuntu14.04">
 <meta property="og:url" content="https://zuolicong.github.io/2016/03/02/windows-ubuntu/index.html">
@@ -60,7 +61,7 @@
 				<h1 class="site-name"><a href="/" title="chinging">chinging</a></h1>
 				<h2 class="blog-motto">左礼聪的博客</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -76,7 +77,7 @@
  					
 					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
 					</form>
 					
 					</li>
@@ -98,14 +99,14 @@
 		<a href="/about" title="zuolicong" target="_blank" itemprop="author">zuolicong</a>
 		
   <p class="article-time">
-    <time datetime="2016-03-02T14:54:56.000Z" itemprop="datePublished"> Published 2016-03-02</time>
+    <time datetime="2016-03-02T14:54:56.000Z" itemprop="datePublished"> 发表于 2016-03-02</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
+			<strong class="toc-title">文章目录</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前期准备工作"><span class="toc-number">1.</span> <span class="toc-text">前期准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作EasyBCD"><span class="toc-number">2.</span> <span class="toc-text">操作EasyBCD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Ubuntu系统"><span class="toc-number">3.</span> <span class="toc-text">安装Ubuntu系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#剩下的工作"><span class="toc-number">4.</span> <span class="toc-text">剩下的工作</span></a></li></ol>
 		
@@ -114,9 +115,9 @@
 		<p>重装了windows系统，硬盘一不小心格式化了，之前装的Ubuntu系统也没有了，这两天再次通过EasyBCD引导安装了Ubuntu14.04搞成双系统，网上有很多这方面的资料，在这里系统的总结一下，并且包含了EasyBCD和32位以及64位Ubuntu14.04的下载地址，以后再要装windows和Ubuntu的双系统用起来也方便。</p>
 <h2 id="前期准备工作"><a href="#前期准备工作" class="headerlink" title="前期准备工作"></a>前期准备工作</h2><p>首先要在电脑的硬盘中分出一个区用来安装Ubuntu，桌面上右键计算机-&gt;管理-&gt;磁盘管理,找一个大的盘（例如F盘）,选中,右键菜单选择压缩卷，在“输入压缩空间量”那一栏输入用来安装Ubuntu系统的大小（我用了60000MB），然后点压缩，这60000MB将成为空闲的空间，用于后面Ubuntu系统的安装。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png" alt="分区"><br>然后下载EasyBCD和Ubuntu的安装包，下面给出了下载地址：</p>
 <ul>
-<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza" target="_blank" rel="external">http://pan.baidu.com/s/1qXwBSza</a></li>
-<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="external">http://pan.baidu.com/s/1o6UVJRG</a></li>
-<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="external">http://pan.baidu.com/s/1mhruuq0</a></li>
+<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza" target="_blank" rel="noopener">http://pan.baidu.com/s/1qXwBSza</a></li>
+<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="noopener">http://pan.baidu.com/s/1o6UVJRG</a></li>
+<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="noopener">http://pan.baidu.com/s/1mhruuq0</a></li>
 </ul>
 <a id="more"></a>
 <p>这里以64位Ubuntu14.04（安装包为ubuntu-14.04-desktop-amd64.iso，32位类似）为例，下载完成之后安装好EasyBCD，将ubuntu-14.04-desktop-amd64.iso放在C盘目录下，并将ubuntu-14.04-desktop-amd64.iso里面的两个文件解压出来也放在C盘目录下，这两个文件分别是initrd.lz和vmlinuz.efi，在casper文件夹里。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2Fcasper.png" alt="casper"></p>
@@ -234,26 +235,30 @@
 
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
+  <strong class="toc-title">文章目录</strong>
  
  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前期准备工作"><span class="toc-number">1.</span> <span class="toc-text">前期准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作EasyBCD"><span class="toc-number">2.</span> <span class="toc-text">操作EasyBCD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Ubuntu系统"><span class="toc-number">3.</span> <span class="toc-text">安装Ubuntu系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#剩下的工作"><span class="toc-number">4.</span> <span class="toc-text">剩下的工作</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 		  
 			<li><a href="/categories/DataStructure/" title="DataStructure">DataStructure<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Docker/" title="Docker">Docker<sup>1</sup></a></li>
 		  
 		
 		  
@@ -286,7 +291,7 @@
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			
@@ -306,7 +311,11 @@
 			
 		
 			
-				<li><a href="/tags/ORM/" title="ORM">ORM<sup>1</sup></a></li>
+				<li><a href="/tags/cphalcon/" title="cphalcon">cphalcon<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>1</sup></a></li>
 			
 		
 			
@@ -318,11 +327,19 @@
 			
 		
 			
-				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ORM/" title="ORM">ORM<sup>1</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/Git/" title="Git">Git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
 			
 		
 			
@@ -333,23 +350,13 @@
 				<li><a href="/tags/HeapSort/" title="HeapSort">HeapSort<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/cphalcon/" title="cphalcon">cphalcon<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
 
   <div class="linkslist">
-  <p class="asidetitle">Links</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
-        
-          <li>
-            
-            	<a href="http://www.genshuixue.com" target="_blank" title="找好老师">跟谁学</a>
-            
-          </li>
         
           <li>
             
@@ -362,7 +369,7 @@
 
   
 <div class="github-card">
-<p class="asidetitle">Github Card</p>
+<p class="asidetitle">Github 名片</p>
 <div class="github-card" data-github="zuolicong" data-width="220" data-height="119" data-theme="medium">
 <script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
 </div>
@@ -610,7 +617,7 @@ var _hmt = _hmt || [];
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
