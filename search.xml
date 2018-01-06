@@ -20,10 +20,10 @@
         <category>Redis</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
-        <tag>Codis</tag>
         <tag>PHP</tag>
         <tag>Linux</tag>
+        <tag>Redis</tag>
+        <tag>Codis</tag>
       </tags>
   </entry>
   <entry>
@@ -83,9 +83,9 @@
         <category>Phalcon</category>
       </categories>
       <tags>
+        <tag>Phalcon</tag>
         <tag>PHP</tag>
         <tag>Linux</tag>
-        <tag>Phalcon</tag>
       </tags>
   </entry>
   <entry>
@@ -106,11 +106,6 @@
     <content type="text"><![CDATA[]]></content>
   </entry>
   <entry>
-    <title><![CDATA[about]]></title>
-    <url>%2Fabout%2Findex.html</url>
-    <content type="text"><![CDATA[brief 一万小时的锤炼是任何人从平凡变成超凡的必要条件。 contact email: zuolicong@foxmail.com]]></content>
-  </entry>
-  <entry>
     <title><![CDATA[search]]></title>
     <url>%2Fsearch%2Findex.html</url>
     <content type="text"></content>
@@ -124,5 +119,10 @@
     <title><![CDATA[All categories]]></title>
     <url>%2Fcategories%2Findex.html</url>
     <content type="text"></content>
+  </entry>
+  <entry>
+    <title><![CDATA[about]]></title>
+    <url>%2Fabout%2Findex.html</url>
+    <content type="text"><![CDATA[brief 一万小时的锤炼是任何人从平凡变成超凡的必要条件。 contact email: zuolicong@foxmail.com]]></content>
   </entry>
 </search>
