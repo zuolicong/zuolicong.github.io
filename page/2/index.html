@@ -286,6 +286,179 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2016/03/02/windows-ubuntu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zuolicong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chinging">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/03/02/windows-ubuntu/" itemprop="url">windows系统下通过EasyBCD引导安装Ubuntu14.04</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-03-02T22:54:56+08:00">
+                2016-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/System/" itemprop="url" rel="index">
+                    <span itemprop="name">System</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/03/02/windows-ubuntu/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2016/03/02/windows-ubuntu/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2016/03/02/windows-ubuntu/" class="leancloud_visitors" data-flag-title="windows系统下通过EasyBCD引导安装Ubuntu14.04">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>重装了windows系统，硬盘一不小心格式化了，之前装的Ubuntu系统也没有了，这两天再次通过EasyBCD引导安装了Ubuntu14.04搞成双系统，网上有很多这方面的资料，在这里系统的总结一下，并且包含了EasyBCD和32位以及64位Ubuntu14.04的下载地址，以后再要装windows和Ubuntu的双系统用起来也方便。</p>
+<h2 id="前期准备工作"><a href="#前期准备工作" class="headerlink" title="前期准备工作"></a>前期准备工作</h2><p>首先要在电脑的硬盘中分出一个区用来安装Ubuntu，桌面上右键计算机-&gt;管理-&gt;磁盘管理,找一个大的盘（例如F盘）,选中,右键菜单选择压缩卷，在“输入压缩空间量”那一栏输入用来安装Ubuntu系统的大小（我用了60000MB），然后点压缩，这60000MB将成为空闲的空间，用于后面Ubuntu系统的安装。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fwin8%E4%B8%8B%E9%80%9A%E8%BF%87EasyBCD%E5%BC%95%E5%AF%BC%E5%AE%89%E8%A3%85Ubuntu14.04%2F%E5%88%86%E5%8C%BA.png" alt="分区"><br>然后下载EasyBCD和Ubuntu的安装包，下面给出了下载地址：</p>
+<ul>
+<li>EasyBCD2.2下载地址：<a href="http://pan.baidu.com/s/1qXwBSza" target="_blank" rel="noopener">http://pan.baidu.com/s/1qXwBSza</a></li>
+<li>32位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1o6UVJRG" target="_blank" rel="noopener">http://pan.baidu.com/s/1o6UVJRG</a></li>
+<li>64位Ubuntu14.04下载地址：<a href="http://pan.baidu.com/s/1mhruuq0" target="_blank" rel="noopener">http://pan.baidu.com/s/1mhruuq0</a></li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/03/02/windows-ubuntu/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2016/01/23/git-tag/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -830,7 +1003,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -841,7 +1014,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -852,7 +1025,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
