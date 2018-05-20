@@ -88,7 +88,7 @@
 <meta property="og:description" content="微服务在近几年比较火，公司也在使用微服务架构。我在最近参与开发的以旧换新项目中也进行了一些微服务相关的实践，在这里总结一下遇到的问题和收获。">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://zuolicong.github.io/images/old-for-new.png">
-<meta property="og:updated_time" content="2018-05-20T15:21:36.000Z">
+<meta property="og:updated_time" content="2018-05-20T16:04:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="以旧换新项目中的微服务实践">
 <meta name="twitter:description" content="微服务在近几年比较火，公司也在使用微服务架构。我在最近参与开发的以旧换新项目中也进行了一些微服务相关的实践，在这里总结一下遇到的问题和收获。">
@@ -421,6 +421,7 @@
 <li>每次用户生成以旧换新券的时候都在redis里加个key标记该用户有以旧换新券，该key的过期时间和券的过期时间一致。在付款页面先通过redis里的标记判断该用户是否有以旧换新券，有才会去请求服务，没有直接不请求，这样就将没有以旧换新券的流量都挡在了外面，极大的减轻了服务的压力。需要说明的一点是，用户使用券的时候也不去改这个标记，因为用户可能有多张券，维护这个标记的成本很高，就算用户只有不可用的券，大不了这部分用户的流量都打到服务上，压力也不会很大。</li>
 <li>在付款页面将调用以旧换新券列表的接口降级，即使接口有问题也不报错，不影响付款流程的进行。</li>
 </ul>
+<h3 id="接口幂等"><a href="#接口幂等" class="headerlink" title="接口幂等"></a>接口幂等</h3><p>退款的时候为了保证整个退款流程走通，券的退回接口可能会被调用多次，因此退回接口设置了幂等，即使某张券已经退回成功，如果再次请求退回该张券，还是返回成功（不需要修改数据库）。支付组成服务在调以旧换新券服务的退回接口时，可能由于网络原因没有接收到正确的返回结果（实际上已经退回成功），这时会重试三次，如果还是失败，就交给消息队列处理，由于接口设置了幂等，最终调用方会收到退回成功的返回结果。</p>
 <h3 id="错误号和Log-ID"><a href="#错误号和Log-ID" class="headerlink" title="错误号和Log ID"></a>错误号和Log ID</h3><p>商城和服务中的错误号最好是统一的，二者之间不要有冲突，这样排查问题的时候更方便。对于同一个请求，商城和服务中用同一个log ID来记录日志，便于追踪问题（这点之前已经是这样做的）。</p>
 
       
@@ -633,7 +634,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目简介"><span class="nav-number">1.</span> <span class="nav-text">项目简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用微服务的原因"><span class="nav-number">2.</span> <span class="nav-text">使用微服务的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题和解决方法"><span class="nav-number">3.</span> <span class="nav-text">遇到的问题和解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务与商城后端解耦不够充分"><span class="nav-number">3.1.</span> <span class="nav-text">服务与商城后端解耦不够充分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发情况下数据不一致的问题"><span class="nav-number">3.2.</span> <span class="nav-text">并发情况下数据不一致的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抢购流量大对以旧换新券服务造成压力"><span class="nav-number">3.3.</span> <span class="nav-text">抢购流量大对以旧换新券服务造成压力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错误号和Log-ID"><span class="nav-number">3.4.</span> <span class="nav-text">错误号和Log ID</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目简介"><span class="nav-number">1.</span> <span class="nav-text">项目简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用微服务的原因"><span class="nav-number">2.</span> <span class="nav-text">使用微服务的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题和解决方法"><span class="nav-number">3.</span> <span class="nav-text">遇到的问题和解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务与商城后端解耦不够充分"><span class="nav-number">3.1.</span> <span class="nav-text">服务与商城后端解耦不够充分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发情况下数据不一致的问题"><span class="nav-number">3.2.</span> <span class="nav-text">并发情况下数据不一致的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抢购流量大对以旧换新券服务造成压力"><span class="nav-number">3.3.</span> <span class="nav-text">抢购流量大对以旧换新券服务造成压力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口幂等"><span class="nav-number">3.4.</span> <span class="nav-text">接口幂等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错误号和Log-ID"><span class="nav-number">3.5.</span> <span class="nav-text">错误号和Log ID</span></a></li></ol></li></ol></div>
             
 
           </div>
