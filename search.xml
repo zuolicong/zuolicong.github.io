@@ -122,16 +122,16 @@
   <entry>
     <title><![CDATA[about]]></title>
     <url>%2Fabout%2Findex.html</url>
-    <content type="text"><![CDATA[brief 一万小时的锤炼是任何人从平凡变成超凡的必要条件。 contact email: zuolicong@foxmail.com]]></content>
-  </entry>
-  <entry>
-    <title><![CDATA[All tags]]></title>
-    <url>%2Ftags%2Findex.html</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[brief 我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！ contact zuolicong@foxmail.com]]></content>
   </entry>
   <entry>
     <title><![CDATA[All categories]]></title>
     <url>%2Fcategories%2Findex.html</url>
+    <content type="text"></content>
+  </entry>
+  <entry>
+    <title><![CDATA[All tags]]></title>
+    <url>%2Ftags%2Findex.html</url>
     <content type="text"></content>
   </entry>
 </search>
