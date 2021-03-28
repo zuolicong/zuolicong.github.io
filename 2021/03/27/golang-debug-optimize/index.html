@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Linux,Go,Pprof," />
 
 
 
@@ -79,16 +79,27 @@
 
 
 
-<meta name="description" content="Keep calm and code on.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="chinging">
-<meta property="og:url" content="https://zuolicong.github.io/tags/微服务/index.html">
+<meta name="description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
+<meta name="keywords" content="Linux,Go,Pprof">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次go语言debug调优实战">
+<meta property="og:url" content="https://zuolicong.github.io/2021/03/27/golang-debug-optimize/index.html">
 <meta property="og:site_name" content="chinging">
-<meta property="og:description" content="Keep calm and code on.">
+<meta property="og:description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/hermes.png">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/free.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/oom.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/ps.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/top.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/stack-trace.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/free.jpg">
+<meta property="og:image" content="https://zuolicong.github.io/images/go-debug/ps.jpg">
+<meta property="og:updated_time" content="2021-03-28T17:32:40.381Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="chinging">
-<meta name="twitter:description" content="Keep calm and code on.">
+<meta name="twitter:title" content="记一次go语言debug调优实战">
+<meta name="twitter:description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
+<meta name="twitter:image" content="https://zuolicong.github.io/images/go-debug/hermes.png">
 
 
 
@@ -118,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://zuolicong.github.io/tags/微服务/"/>
+  <link rel="canonical" href="https://zuolicong.github.io/2021/03/27/golang-debug-optimize/"/>
 
 
 
 
 
-  <title>Tag: 微服务 | chinging</title>
+  <title>记一次go语言debug调优实战 | chinging</title>
   
 
 
@@ -143,7 +154,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -271,54 +282,215 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h2>微服务<small>Tag</small>
-        </h2>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2021/03/27/golang-debug-optimize/">
 
-      <h3 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zuolicong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chinging">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/05/01/microservice-in-old-for-new/" itemprop="url">
-              
-                <span itemprop="name">以旧换新项目中的微服务实践</span>
-              
-            </a>
         
-      </h3>
+          <h2 class="post-title" itemprop="name headline">记一次go语言debug调优实战</h2>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-05-01T17:18:06+08:00"
-              content="2018-05-01" >
-          05-01
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-03-27T17:09:11+08:00">
+                2021-03-27
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/03/27/golang-debug-optimize/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/03/27/golang-debug-optimize/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2021/03/27/golang-debug-optimize/" class="leancloud_visitors" data-flag-title="记一次go语言debug调优实战">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
+<a id="more"></a>
+<h2 id="Linux调试"><a href="#Linux调试" class="headerlink" title="Linux调试"></a>Linux调试</h2><h3 id="系统内存占用"><a href="#系统内存占用" class="headerlink" title="系统内存占用"></a>系统内存占用</h3><p>在确认不是MQ连接的问题之后，先是怀疑OOM了，用free看了下机器内存使用情况，从”-/+ buffers/cache”这一行可以看到能够挪用的内存还有9869M，不是OOM。<br><img src="/images/go-debug/free.jpg" alt="free结果"><br>查看日志也确认没有OOM信息：<br><img src="/images/go-debug/oom.jpg" alt="OOM日志"></p>
+<h3 id="程序内存占用"><a href="#程序内存占用" class="headerlink" title="程序内存占用"></a>程序内存占用</h3><p>ps和top看下，占用的内存也并不高：<br><img src="/images/go-debug/ps.jpg" alt="ps"><br><img src="/images/go-debug/top.jpg" alt="ps"></p>
+<h2 id="go-pprof调试"><a href="#go-pprof调试" class="headerlink" title="go pprof调试"></a>go pprof调试</h2><p>在程序中加上pprof调试代码之后，查看goroutine堆栈信息，发现有一个异常信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">goroutine 17 [chan send, 29 minutes, locked to thread]</div></pre></td></tr></table></figure></p>
+<p>堆栈信息开始于MQ订阅，阻塞于Dispatcher写入filter channel的时候，而Filter模块只是进行参数的判断过滤，没有进行网络请求或者IO操作，应该处理的很快，那可能是下游的store channel阻塞了，因为Store模块会请求Redis和MySQL，有网络请求和IO操作，处理比较慢，而Store模块是串行处理store channel里的数据的。于是将Store改为并行处理store channel，读取channel里的数据之后用goroutine进行处理。改完重新编译运行，发现MQ消费不会中断了！<br><img src="/images/go-debug/stack-trace.jpg" alt="stack-trace"></p>
+<h2 id="附：Linux几个调试命令输出内容字段解释"><a href="#附：Linux几个调试命令输出内容字段解释" class="headerlink" title="附：Linux几个调试命令输出内容字段解释"></a>附：Linux几个调试命令输出内容字段解释</h2><h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p><img src="/images/go-debug/free.jpg" alt="free结果"></p>
+<h4 id="输出结果对应字段说明"><a href="#输出结果对应字段说明" class="headerlink" title="输出结果对应字段说明"></a>输出结果对应字段说明</h4><ul>
+<li>Mem：内存的使用情况</li>
+<li>-/+ buffers/cache：表示物理内存已用多少，可用多少</li>
+<li>Swap：交换空间的使用情况</li>
+</ul>
+<h4 id="关于buffers和cached的区别"><a href="#关于buffers和cached的区别" class="headerlink" title="关于buffers和cached的区别"></a>关于buffers和cached的区别</h4><ul>
+<li>A buffer is something that has yet to be “written” to disk.</li>
+<li>A cache is something that has been “read” from the disk and stored for later use.</li>
+</ul>
+<h4 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h4><ul>
+<li>Mem<ul>
+<li>total = used + free</li>
+</ul>
+</li>
+<li>-/+ buffers/cache<ul>
+<li>used = Mem used - Mem buffers - Mem cached</li>
+<li>free = Mem free + Mem buffers + Mem cached</li>
+</ul>
+</li>
+</ul>
+<h3 id="ps-aux"><a href="#ps-aux" class="headerlink" title="ps aux"></a>ps aux</h3><h4 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h4><p><img src="/images/go-debug/ps.jpg" alt="ps"></p>
+<h4 id="输出结果对应字段说明-1"><a href="#输出结果对应字段说明-1" class="headerlink" title="输出结果对应字段说明"></a>输出结果对应字段说明</h4><ul>
+<li>USER：进程的所有者</li>
+<li>PID：进程ID号</li>
+<li>%CPU：CPU占用率 </li>
+<li>%MEM：内存占用率</li>
+<li>VSZ：虚拟内存使用量(单位KB)</li>
+<li>RSS：占用的固定内存量(单位KB)</li>
+<li>TTY：所在终端 </li>
+<li>STAT：进程状态</li>
+<li>START：被启动的时间</li>
+<li>TIME：实际使用CPU的时间 </li>
+<li>COMMAND：命令名称与参数</li>
+</ul>
+<h4 id="进程状态说明："><a href="#进程状态说明：" class="headerlink" title="进程状态说明："></a>进程状态说明：</h4><p>D    Uninterruptible sleep (usually IO)<br>R    Running or runnable (on run queue)<br>S    Interruptible sleep (waiting for an event to complete)<br>T    Stopped, either by a job control signal or because it is being traced.<br>W    paging (not valid since the 2.6.xx kernel)<br>X    dead (should never be seen)<br>Z    Defunct (“zombie”) process, terminated but not reaped by its parent.</p>
+<p>For BSD formats and when the stat keyword is used, additional characters may be displayed:<br>&lt;    high-priority (not nice to other users)<br>N    low-priority (nice to other users)<br>L    has pages locked into memory (for real-time and custom IO)<br>s    is a session leader<br>l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)<br>+    is in the foreground process group</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/ouyang_peng/article/details/84292776" target="_blank" rel="noopener">【Linux学习】Linux free 命令学习</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Go/" rel="tag"># Go</a>
+          
+            <a href="/tags/Pprof/" rel="tag"># Pprof</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/03/py2-py3-yd-trouble-for-mac/" rel="next" title="Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程">
+                <i class="fa fa-chevron-left"></i> Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -326,6 +498,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -346,8 +525,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -427,6 +615,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux调试"><span class="nav-number">1.</span> <span class="nav-text">Linux调试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统内存占用"><span class="nav-number">1.1.</span> <span class="nav-text">系统内存占用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序内存占用"><span class="nav-number">1.2.</span> <span class="nav-text">程序内存占用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go-pprof调试"><span class="nav-number">2.</span> <span class="nav-text">go pprof调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附：Linux几个调试命令输出内容字段解释"><span class="nav-number">3.</span> <span class="nav-text">附：Linux几个调试命令输出内容字段解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#free"><span class="nav-number">3.1.</span> <span class="nav-text">free</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#示例"><span class="nav-number">3.1.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#输出结果对应字段说明"><span class="nav-number">3.1.2.</span> <span class="nav-text">输出结果对应字段说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于buffers和cached的区别"><span class="nav-number">3.1.3.</span> <span class="nav-text">关于buffers和cached的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算"><span class="nav-number">3.1.4.</span> <span class="nav-text">计算</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps-aux"><span class="nav-number">3.2.</span> <span class="nav-text">ps aux</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#示例-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#输出结果对应字段说明-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">输出结果对应字段说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程状态说明："><span class="nav-number">3.2.3.</span> <span class="nav-text">进程状态说明：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -567,6 +771,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

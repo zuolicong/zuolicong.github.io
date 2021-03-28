@@ -286,6 +286,151 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2021/03/27/golang-debug-optimize/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zuolicong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chinging">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/03/27/golang-debug-optimize/" itemprop="url">记一次go语言debug调优实战</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-03-27T17:09:11+08:00">
+                2021-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/03/27/golang-debug-optimize/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/03/27/golang-debug-optimize/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2021/03/27/golang-debug-optimize/" class="leancloud_visitors" data-flag-title="记一次go语言debug调优实战">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/03/27/golang-debug-optimize/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2020/05/03/py2-py3-yd-trouble-for-mac/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -921,173 +1066,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2017/01/25/phalcom-model-double-save/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zuolicong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/author.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chinging">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/01/25/phalcom-model-double-save/" itemprop="url">Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-25T19:50:22+08:00">
-                2017-01-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Phalcon/" itemprop="url" rel="index">
-                    <span itemprop="name">Phalcon</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/01/25/phalcom-model-double-save/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2017/01/25/phalcom-model-double-save/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2017/01/25/phalcom-model-double-save/" class="leancloud_visitors" data-flag-title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">Views&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>使用MySQL数据库，有些字段设置为NOT NULL，默认值非0或非空字符串，如果用Phalcon的Model连续进行两次save()操作(第二次操作需要用到第一次生成的id，所以不能合并成一次，本文中是pid字段是根据id字段生成的，确保二者的一一对应关系)，并且没有指定这些字段的值，最终的结果是这些字段的值变成了0或空字符串，而不是数据库里设置的默认值。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/25/phalcom-model-double-save/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1142,7 +1120,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1153,7 +1131,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -1164,7 +1142,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -1217,7 +1195,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
