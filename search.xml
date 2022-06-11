@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>IM系统redis迁移到codis实践</title>
+    <url>/2017/04/26/im-redis-to-codis/</url>
+    <content><![CDATA[<p>公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人、最近一条消息、未读消息数、黑名单、频率及敏感词限制、Token等，而消息拉链、最近一条消息和未读消息数是进行持久存储的，因此这些数据需要进行迁移。</p>
+<a id="more"></a>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>为了不影响用户的使用，代码上线定在凌晨一点。数据迁移到codis的同时还要修改key，因此不能直接使用redis-port等工具将旧的redis里面的数据同步到新的codis集群，最终决定写脚本进行数据迁移。先使用keys命令模糊匹配出旧redis里的所有key，取出数据然后设置新的key批量保存到codis集群中。消息拉链的数据量很大，可以先进行一次全量的数据迁移，代码上线之前再进行一次增量数据迁移。最近一条消息和未读消息数数据时效性比较大，也在代码上线前进行同步。具体步骤如下：</p>
+<ul>
+<li>将代码中记录redis key的常量文件备份一份，将原来的key修改成规范形式，并添加codis的配置文件及连接方法，写脚本通过备份的redis key文件从旧数据库读数据，然后批量写入codis集群；</li>
+<li>在beta机器上跑脚本全量迁移消息拉链数据；</li>
+<li>上线前IM系统停止服务，避免在上线过程中有数据写入；</li>
+<li>从MySQL数据库取出全量迁移消息拉链之后新增的数据，添加到codis，并迁移最近一条消息和未读消息数的数据；</li>
+<li>通过查看日志、自测等方法验证数据迁移是否成功；</li>
+<li>代码上线；</li>
+<li>QA进行回归测试</li>
+</ul>
+<h2 id="遇到的问题及解决方法"><a href="#遇到的问题及解决方法" class="headerlink" title="遇到的问题及解决方法"></a>遇到的问题及解决方法</h2><ol>
+<li><p>数据迁移脚本运行时间很长(全量迁移消息拉链的脚本运行了5个小时左右)，如果直接运行脚本，断网或者终端与服务器连接断开会导致脚本停止运行<br>解决方法：使用nohup在后台运行脚本，如下所示，并且在退出服务器时要通过exit命令退出，不能直接关掉，否则进程也会中止。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nohup php cli.php redis_migrate migrateTotal &amp;&gt;&gt; /apps2/tmp/im/redis_migrate_migrateTotal.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>日志文件太大（最大的一个有1.8G），beta机器的一个磁盘打满了，导致进程结束<br>解决方法：通过df命令查看磁盘空间使用情况，选择剩余空间比较大的磁盘打日志，这里选择/dev/xvdc1，即/apps2文件夹下面。<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/df%E7%BB%93%E6%9E%9C.png" alt="df结果"></p>
+</li>
+<li><p>一次mset太多键值对数据，报Segmentation fault，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/segmentation_fault.png" alt="Segmentation fault"><br>解决方法：先对数据进行分组，如5000个键值对为一组，然后循环进行mset，代码见第三部分。</p>
+</li>
+<li><p>从MySQL数据库查消息拉链的增量数据，报timeout exception，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/slow_query.png" alt="slow query"><br>根据日志可以看出这是一个慢查询，sql语句如下，查看表结构发现update_time字段没有建索引，而且数据量很大（查了下一对一聊天记录表有36133336条数据），所以查询慢，而另外一个字段create_time建了联合索引，根据最左前缀法则，使用create_time代替update_time将用到索引，问题得到解决。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 慢查询sql</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> im_message_info_single <span class="keyword">WHERE</span> update_time &gt; <span class="string">"2017-04-25 23:07:51"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- create_time和sender_r字段建立的联合索引</span></span><br><span class="line">KEY `idx_createtime_send_r` (`create_time`,`sender_r`)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 优化之后的sql</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> im_message_info_single <span class="keyword">WHERE</span> create_time &gt; <span class="string">"2017-04-25 23:07:51"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用keys命令获取所有用户一对一聊天未读消息数的key时，redis报”read error on connection”错误，如图：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog/im-redis-to-codis/read_error_on_connection.png" alt="read error on connection"><br>google了一下发现是数据量太大，读取超时的原因，通过setOption命令设置不超时解决，参见：<a href="https://nil.sh/RedisException-with-message-read-error-on-connection.html" target="_blank" rel="noopener">https://nil.sh/RedisException-with-message-read-error-on-connection.html</a></p>
+</li>
+<li><p>迁完之后发现codis里找不到数据，可能是db不对，默认是db 0，通过select命令选择数据所在db之后再查看。</p>
+</li>
+</ol>
+<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>所有业务的消息拉链都是采用sorted set结构，所有业务的最后一条消息都是采用string结构，社区、考研、金囿、群组这几个业务的未读消息数采用hash结构，系统未读消息采用sorted set结构，一对一聊天的未读消息数采用string结构，sorted set、string和hash这三种结构的数据分别先通过keys命令获取保存所有key的数组，然后调用以下函数（略去Action函数）将数据迁移到codis。<br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RedisMigrateTask</span> <span class="keyword">extends</span> \<span class="title">Phalcon</span>\<span class="title">Cli</span>\<span class="title">Task</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> CHUNK_SIZE = <span class="number">5000</span>;    <span class="comment">// 数据分组大小</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $redisInstance = <span class="keyword">null</span>;    <span class="comment">// redis实例</span></span><br><span class="line">    <span class="keyword">public</span> $codisInstance = <span class="keyword">null</span>;    <span class="comment">// codis实例</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 批量迁移sorted set数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldKeys array 存储旧key的数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldPrefix string 旧key前缀</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $newPrefix string 新key前缀</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateSortedSetData</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</span><br><span class="line">            <span class="keyword">foreach</span> ($oldKeys <span class="keyword">as</span> $oldKey) &#123;</span><br><span class="line">                $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</span><br><span class="line">                $sortedSetData = <span class="keyword">$this</span>-&gt;redisInstance-&gt;zRange($oldKey, <span class="number">0</span>, <span class="number">-1</span>, <span class="keyword">true</span>);</span><br><span class="line">                $items = [];</span><br><span class="line">                $logArr = [];</span><br><span class="line">                <span class="keyword">foreach</span> ($sortedSetData <span class="keyword">as</span> $val =&gt; $score) &#123;</span><br><span class="line">                    $items[] = $score;</span><br><span class="line">                    $items[] = $val;</span><br><span class="line">                    $logArr[] = $score . <span class="string">':'</span> . $val;</span><br><span class="line">                &#125;</span><br><span class="line">                array_unshift($items, $newKey);</span><br><span class="line">                $num = call_user_func_array([<span class="keyword">$this</span>-&gt;codisInstance, <span class="string">'zAdd'</span>], $items);    <span class="comment">// 添加成功个数</span></span><br><span class="line">                <span class="keyword">if</span> ($num === <span class="keyword">false</span>) &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] failed to migrate to codis! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</span><br><span class="line">                &#125; <span class="keyword">elseif</span> ($num == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] has existed and is the same! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old key [&#123;$oldKey&#125;] with &#123;$num&#125; values was migrated to codis successfully! old score=&gt;value: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 分组批量迁移string数据。数据太多全量用mset会报Segmentation fault, 分组mget, mset</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldKeys</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldPrefix</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $newPrefix</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateKvDataChunk</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</span><br><span class="line">            $oldKeysChunk = array_chunk($oldKeys, <span class="keyword">self</span>::CHUNK_SIZE);</span><br><span class="line">            <span class="keyword">foreach</span> ($oldKeysChunk <span class="keyword">as</span> $oldkeysGroup) &#123;</span><br><span class="line">                $valuesGroup = <span class="keyword">$this</span>-&gt;redisInstance-&gt;mget($oldkeysGroup);</span><br><span class="line">                $valuesGroupAssoc = [];</span><br><span class="line">                <span class="keyword">foreach</span> ($oldkeysGroup <span class="keyword">as</span> $idx =&gt; $oldKey) &#123;</span><br><span class="line">                    $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</span><br><span class="line">                    $valuesGroupAssoc[$newKey] = $valuesGroup[$idx];</span><br><span class="line">                &#125;</span><br><span class="line">                $ret = <span class="keyword">$this</span>-&gt;codisInstance-&gt;mset($valuesGroupAssoc);    <span class="comment">// bool值</span></span><br><span class="line">                <span class="keyword">if</span> ($ret) &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old kvs was migrated to codis successfully! old keys: "</span> . join(<span class="string">','</span>, $oldkeysGroup) . PHP_EOL;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old kvs failed to migrate to codis! old keys: "</span> . join(<span class="string">','</span>, $oldkeysGroup) . PHP_EOL;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 批量迁移hash数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldKeys</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldPrefix</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $newPrefix</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">migrateHashData</span><span class="params">($oldKeys, $oldPrefix, $newPrefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($oldKeys === <span class="keyword">false</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] failed!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">empty</span>($oldKeys)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] keys [&#123;$oldPrefix&#125;*] are empty!"</span> . PHP_EOL;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] get keys [&#123;$oldPrefix&#125;*] successfully!"</span> . PHP_EOL;</span><br><span class="line">            <span class="keyword">foreach</span> ($oldKeys <span class="keyword">as</span> $oldKey) &#123;</span><br><span class="line">                $hashData = <span class="keyword">$this</span>-&gt;redisInstance-&gt;hGetAll($oldKey);</span><br><span class="line">                $newKey = <span class="keyword">$this</span>-&gt;getNewKey($oldKey, $oldPrefix, $newPrefix);</span><br><span class="line">                $ret = <span class="keyword">$this</span>-&gt;codisInstance-&gt;hMset($newKey, $hashData);    <span class="comment">// bool值</span></span><br><span class="line">                $logArr = [];</span><br><span class="line">                <span class="keyword">foreach</span> ($hashData <span class="keyword">as</span> $hashKey =&gt; $hashVal) &#123;</span><br><span class="line">                    $logArr[] = $hashKey . <span class="string">':'</span> . $hashVal;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> ($ret) &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old hash key [&#123;$oldKey&#125;] was migrated to codis successfully! old hash data: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="keyword">__METHOD__</span> . <span class="string">' ['</span> . date(<span class="string">'Y-m-d H:i:s'</span>) . <span class="string">"] old hash key [&#123;$oldKey&#125;] failed to migrate to codis! old hash data: "</span> . join(<span class="string">','</span>, $logArr) . PHP_EOL;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成新的key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldKey string 旧redis的key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $oldPrefix string 旧key前缀</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $newPrefix string 新key前缀</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getNewKey</span><span class="params">($oldKey, $oldPrefix, $newPrefix)</span> </span>&#123;</span><br><span class="line">        $offset = strlen($oldPrefix);</span><br><span class="line">        $suffix = substr($oldKey, $offset);</span><br><span class="line">        $newKey = $newPrefix . $suffix;</span><br><span class="line">        <span class="keyword">return</span> $newKey;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+        <tag>Codis</tag>
+        <tag>PHP</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mac docker内请求http(s)失败的问题处理</title>
+    <url>/2017/12/23/docker-for-mac-localhost-issue/</url>
+    <content><![CDATA[<p>新建了一个docker容器，发现在容器内运行go get命令时会报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# go get -u -v github.com/nsf/gocode</span><br><span class="line">github.com/nsf/gocode (download)</span><br><span class="line"># cd /home/work/data/www/go/src/github.com/nsf/gocode; git pull --ff-only</span><br><span class="line">error: Failed connect to github.com:8888; Operation now in progress while accessing https://github.com/nsf/gocode/info/refs</span><br><span class="line"></span><br><span class="line">fatal: HTTP request failed</span><br><span class="line">package github.com/nsf/gocode: exit status 1</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>访问github.com时莫名其妙的多了一个8888端口，查了相关资料发现是Mac新版的docker加了个http_proxy代理：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# echo $http_proxy</span><br><span class="line">docker.for.mac.localhost:8888</span><br></pre></td></tr></table></figure></p>
+<p>找了很长时间也没发现怎么去掉这个http_proxy，最后发现可以将http_proxy这个环境变量定义为空，就可以把原来那个值覆盖掉，于是在~/.bash_profile加上<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export http_proxy=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>再source ~/.bash_profile就可以了。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Mac</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>以旧换新项目中的微服务实践</title>
+    <url>/2018/05/01/microservice-in-old-for-new/</url>
+    <content><![CDATA[<p>微服务在近几年比较火，公司也在使用微服务架构。我在最近参与开发的以旧换新项目中也进行了一些微服务相关的实践，在这里总结一下遇到的问题和收获。</p>
+<a id="more"></a>
+<h2 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h2><p>该项目主要是针对印度商城，用户用旧手机换取优惠券，抵扣购买新手机的部分费用。流程如下图所示，用户在web端输入手机IMEI信息，后端调用cashify的接口获取报价及报价id，或者用app进行检测（使用cashify提供的SDK）获取报价和报价id，再调用以旧换新服务生成以旧换新券。用户下单的时候可以使用券，调用支付组成服务以及订单组的接口完成交易，物流组负责发货相关功能，实际配送由第三方物流公司Ekart完成。Ekart将新手机派送给用户，并回收用户的旧手机，回收时会进行质检，没问题了会把旧手机派送给cashify，cashify把旧手机的钱打给我们。<br><img src="/images/old-for-new.png" alt="以旧换新流程图"></p>
+<p>我主要负责和cashify对接接口、商城后端生成以旧换新券流程中的相关接口以及以旧换新券服务。以旧换新券服务使用公司的SOA框架，其它项目通过thrift调用以旧换新券服务。</p>
+<h2 id="使用微服务的原因"><a href="#使用微服务的原因" class="headerlink" title="使用微服务的原因"></a>使用微服务的原因</h2><p>以旧换新券被做成了一个单独的服务，主要有一下几点好处：</p>
+<ul>
+<li><p>首先，比较安全。作为独立的服务，可以限制只有内网的ip才能访问，不对外暴露；此外，由于使用thrift协议，需要使用SDK才能请求相应的接口，很大程度上避免了恶意攻击；</p>
+</li>
+<li><p>其次，以旧换新券服务的代码和数据库都部署在独立的机器上，即使该服务挂了，也不会影响商城其它的功能。当遇到流量比较大的情况时，可以单独给服务加机器，提高机器的使用率；</p>
+</li>
+<li><p>再者，可以降低业务的耦合度，避免单体应用代码过于庞大臃肿的情况。</p>
+</li>
+</ul>
+<h2 id="遇到的问题和解决方法"><a href="#遇到的问题和解决方法" class="headerlink" title="遇到的问题和解决方法"></a>遇到的问题和解决方法</h2><h3 id="服务与商城后端解耦不够充分"><a href="#服务与商城后端解耦不够充分" class="headerlink" title="服务与商城后端解耦不够充分"></a>服务与商城后端解耦不够充分</h3><p>最开始我考虑的是，以旧换新券后续可能还有别的生成途径，不一定要通过请求cashify的接口获取报价来生成，于是我就把请求cashify的逻辑都放到商城后端来做，请求完之后再调以旧换新券服务生成券，后来发现这样做存在很大的问题：在PC或m站，用户输入手机的IMEI号来生成以旧换新券，商城后端得先调用服务判断该IMEI号是否已经生成了券，生成的券是否已经过期，如果没有生成过券或者生成的券已经过期了就会调用cashify的接口获取报价和报价ID等信息，并根据这些信息再次调用服务生成券，而服务中生成券逻辑需要再次查询数据库判断是否满足生成券的条件，相当于商城和服务中有重复的代码。于是将调用cashify接口的逻辑迁移到服务中进行，使服务和商城后端不再耦合。</p>
+<p>其实最开始的思路是有问题的，即使以旧换新券还有别的生成途径，这些和生成券相关的逻辑都应该放到一起，充分和商城代码解耦。</p>
+<h3 id="并发情况下数据不一致的问题"><a href="#并发情况下数据不一致的问题" class="headerlink" title="并发情况下数据不一致的问题"></a>并发情况下数据不一致的问题</h3><p>上面提到过，在PC或m站生成券的时候会先根据IMEI号判读是否满足生成券的条件，如果满足就会调用cashify的接口获取报价和报价ID并生成券，记录在数据库中。但是当两个相同的IMEI号同时请求时就会有问题，这两个请求同时去查数据库发现该IMEI号满足生成券的条件，就都去请求cashify的接口，这时cashify会生成两个报价ID，最终数据库保存的是先生成的那个报价ID，而最新生成的报价ID才是有效的，这就导致在优惠券使用之后订单组根据报价ID回调cashify的时候不成功。</p>
+<p>最终解决方法是在redis里设置一个过期时间为30秒的key，标记某个IMEI在30秒之内是否已经请求过这个接口，如果请求过，直接返回请求过于频繁的信息，保证同一个IMEI不会同时请求cashify的接口生成两个报价ID；再就是根据日志修复之前有问题的数据；另外，之所以正常情况下（不是刷接口）也会出现两个相同的IMEI号同时请求，是因为用户在点击生成按钮之后发现没有反应，或者是手抖，连续点了两下，所以前端也需要进行相应的优化，在用户点击一次之后，显示一个类似loading的效果，不让用户继续点。</p>
+<h3 id="抢购流量大对以旧换新券服务造成压力"><a href="#抢购流量大对以旧换新券服务造成压力" class="headerlink" title="抢购流量大对以旧换新券服务造成压力"></a>抢购流量大对以旧换新券服务造成压力</h3><p>付款页面会调以旧换新券服务获取当前用户可用的券，抢购的时候流量比较大，服务接口的错误率比较高，直接导致有些用户付不了款。解决的方法如下：</p>
+<ul>
+<li>每次用户生成以旧换新券的时候都在redis里加个key标记该用户有以旧换新券，该key的过期时间和券的过期时间一致。在付款页面先通过redis里的标记判断该用户是否有以旧换新券，有才会去请求服务，没有直接不请求，这样就将没有以旧换新券的流量都挡在了外面，极大的减轻了服务的压力。需要说明的一点是，用户使用券的时候也不去改这个标记，因为用户可能有多张券，维护这个标记的成本很高，就算用户只有不可用的券，大不了这部分用户的流量都打到服务上，压力也不会很大。</li>
+<li>在付款页面将调用以旧换新券列表的接口降级，即使接口有问题也不报错，不影响付款流程的进行。</li>
+</ul>
+<h3 id="接口幂等"><a href="#接口幂等" class="headerlink" title="接口幂等"></a>接口幂等</h3><p>退款的时候为了保证整个退款流程走通，券的退回接口可能会被调用多次，因此退回接口设置了幂等，即使某张券已经退回成功，如果再次请求退回该张券，还是返回成功（不需要修改数据库）。支付组成服务在调以旧换新券服务的退回接口时，可能由于网络原因没有接收到正确的返回结果（实际上已经退回成功），这时会重试三次，如果还是失败，就交给消息队列处理，由于接口设置了幂等，最终调用方会收到退回成功的返回结果。</p>
+<h3 id="错误号和Log-ID"><a href="#错误号和Log-ID" class="headerlink" title="错误号和Log ID"></a>错误号和Log ID</h3><p>商城和服务中的错误号最好是统一的，二者之间不要有冲突，这样排查问题的时候更方便。对于同一个请求，商城和服务中用同一个Log ID来记录日志，便于追踪问题（这点项目之前的逻辑已经是这样做的）。</p>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>微服务</tag>
+        <tag>RPC</tag>
+        <tag>Thrift</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程</title>
+    <url>/2020/05/03/py2-py3-yd-trouble-for-mac/</url>
+    <content><![CDATA[<p>最近用Mac brew安装一些包的时候顺带把Python从2.7升级到了3.7，导致之前在Python2下安装的很多包用不了了，例如yd、ipython、musicbox等：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~</span><br><span class="line">╰─$ musicbox</span><br><span class="line">zsh: /usr/local/bin/musicbox: bad interpreter: /usr/local/opt/python/bin/python2.7: no such file or directory</span><br></pre></td></tr></table></figure></p>
+<p>平时用yd命令翻译单词还是挺方便的，于是就想着索性用pip3再安装一遍，反正Python2后面也要被淘汰了。然而以为很简单的事，却一顿折腾。运行pip3 install yd先报了这么一个错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &apos;version&apos;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h2 id="踩坑历程"><a href="#踩坑历程" class="headerlink" title="踩坑历程"></a>踩坑历程</h2><p>既然没有version包，那就再安装一个呗，于是pip3 install version，然而又报这个：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">importError: cannot import name &apos;izip_longest&apos;</span><br></pre></td></tr></table></figure></p>
+<p>在网上查了下，itertools.izip在pyhton3中已被去掉了，zip成为内置的方法。解决方法是找到version包源文件中使用了”from itertools import izip_longest”的文件， 将izip_longest改为zip_longest，再手动安装，然而/usr/local/lib/python3.7/site-packages目录下也没有pip3下载的version包源文件，我试着用pip3 download version，仍然报上面那个错。看来只能去官网下载了：<a href="https://pypi.org/project/version/" target="_blank" rel="noopener">https://pypi.org/project/version/</a></p>
+<p>官网的version包链接到了<a href="https://github.com/keleshev/version" target="_blank" rel="noopener">https://github.com/keleshev/version</a> ，可以直接下载zip文件，然后执行以下命令就可以安装version了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~/python-code</span><br><span class="line">╰─$ pip3 install ./version-master.zip</span><br><span class="line">Processing ./version-master.zip</span><br><span class="line">Building wheels for collected packages: version</span><br><span class="line">  Building wheel for version (setup.py) ... done</span><br><span class="line">  Created wheel for version: filename=version-0.1.2-py3-none-any.whl size=3249 sha256=d7f32866382d5d711c6e72e0a877ac2062fc7f25bed901567cbabd9168b17abc</span><br><span class="line">  Stored in directory: /Users/zuolicong/Library/Caches/pip/wheels/25/58/94/317ecc66e2db4df75bb89ea3bf33401b3de1360fdb984f0428</span><br><span class="line">Successfully built version</span><br><span class="line">Installing collected packages: version</span><br><span class="line">Successfully installed version-0.1.2</span><br></pre></td></tr></table></figure></p>
+<p>可以发现官网上的version包其实对Python2和Python3做了兼容：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> sys.version_info &gt;= (<span class="number">3</span>, <span class="number">0</span>):</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> zip_longest <span class="keyword">as</span> izip_longest</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> izip_longest</span><br></pre></td></tr></table></figure></p>
+<p>再运行pip3 install yd命令，bingo，安装成功，然而我还是太年轻，使用yd的时候又遇到一系列兼容问题：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 131</span><br><span class="line">    print output</span><br><span class="line">               ^</span><br><span class="line">SyntaxError: Missing parentheses in call to 'print'. Did you mean print(output)?</span><br></pre></td></tr></table></figure></p>
+<p>Python2中的”print output”在Python3中需要改成”print(output)”</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">ModuleNotFoundError: No module named 'environ'</span><br></pre></td></tr></table></figure>
+<p>继续pip3 install environ</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 114</span><br><span class="line">    raise ValueError, "No frame marked with %s." % fname</span><br><span class="line">                    ^</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>Python3中raise用法需要改成：raise ValueError(“No frame marked with %s.” % fname)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 250, in &lt;module&gt;</span><br><span class="line">    ctx = Environ(None)</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 105, in __init__</span><br><span class="line">    elif isinstance(frame, basestring):</span><br><span class="line">NameError: name 'basestring' is not defined</span><br></pre></td></tr></table></figure>
+<p>Python3中”basestring”需要改成”str”</p>
+<p>然而无解的来了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 7, in &lt;module&gt;</span><br><span class="line">    import ydsearch</span><br><span class="line">ModuleNotFoundError: No module named 'ydsearch'</span><br></pre></td></tr></table></figure></p>
+<p>执行pip3 install ydsearch报：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ERROR: Could not find a version that satisfies the requirement ydsearch (from versions: none)</span><br><span class="line">ERROR: No matching distribution found for ydsearch</span><br></pre></td></tr></table></figure></p>
+<p>这么说来Python3压根就不支持yd包，害我还折腾了这么长时间。于是想到go是不是有类似的包可以替代，于是github上搜了下发现了这个：<a href="https://github.com/TimothyYe/ydict" target="_blank" rel="noopener">https://github.com/TimothyYe/ydict</a> ，于是<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go get -v github.com/TimothyYe/ydict</span><br></pre></td></tr></table></figure></p>
+<p>嗯，真香。</p>
+<h2 id="一点想法"><a href="#一点想法" class="headerlink" title="一点想法"></a>一点想法</h2><p>只能说Python 2和3兼容性真的太差，如果项目想从2升级到3成本太高，导致生态有点割裂。感觉设计者初期没太想好。不过我等屁民也不好评判大佬当初的想法，只能尽量避免踩坑，或者寻求可替代的方案，比如go。当然不同的语言使用的场景不同，适合的才是最好的。</p>
+]]></content>
+      <tags>
+        <tag>Go</tag>
+        <tag>Python</tag>
+        <tag>pip</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git打tag的方法和技巧</title>
+    <url>/2016/01/23/git-tag/</url>
+    <content><![CDATA[<p>使用git作为版本控制工具，在代码上线之前需要打tag，便于团队有条不紊地上线代码。在这里总结一下打tag的方法与可能用到的技巧。</p>
+<h2 id="打tag并上线的常规流程"><a href="#打tag并上线的常规流程" class="headerlink" title="打tag并上线的常规流程"></a>打tag并上线的常规流程</h2><p>一般是基于master分支打tag并推送tag到远程仓库，然后上线。要上线的代码合到master分支上之后，切换到master分支，pull最新代码，然后查看远程仓库的最新tag（假设为release_im_v0.0.9.8），在其基础上打tag release_im_v0.0.9.9。然后查看线上tag是哪一个（假设为release_im_v0.0.9.7），将新打的tag与线上tag进行diff，看代码有没有冲突，或者有没有别人合到master上但是暂时还不能上线的代码，如果没有问题，就可以把tag推送到远程仓库，然后请QA君帮忙上线。需要注意的是不能直接在线上tag的基础上加一作为新的tag，因为在你打tag期间团队其他人可能也打了tag，只是还没来得及上线而已，为避免冲突，需要基于远程仓库的最新tag打新tag。打tag并上线的流程如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">$ git pull</span><br><span class="line">$ git tag|grep im|tail                                 #查看远程仓库含有im的最新tag</span><br><span class="line">$ git tag -a release_im_v0.0.9.9 -m &apos;im咨询记录更改&apos;     #一般打含有附注的标签</span><br><span class="line">$ git diff release_im_v0.0.9.7 release_im_v0.0.9.9     #如果改动比较多，也可以在gitlab上进行diff（当然要先push）</span><br><span class="line">#如果diff没有问题，就可以把tag推送到远程仓库，远程仓库如果是origin，则可省略origin</span><br><span class="line">$ git push [origin] release_im_v0.0.9.9                #推送具体的tag到远程仓库</span><br><span class="line">$ git push [origin] --tags                             #一次推送所有的tag到远程仓库</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>如果diff有冲突，或者master分支上含有不能上线的代码，或者要修改一个线上的bug比较紧急，就需要基于线上tag拉分支，把自己的修改的代码应用到该分支，然后在该分支上打tag上线。需要注意的是，基于自己的分支打tag上完线，还是要把该分支合到master上，不然自己改动的代码会被后面基于master的tag所覆盖。</p>
+<h2 id="基于线上tag修改代码并上线"><a href="#基于线上tag修改代码并上线" class="headerlink" title="基于线上tag修改代码并上线"></a>基于线上tag修改代码并上线</h2><p>当需要解决线上bug比较紧急，则需要基于线上tag拉分支，在该分支修改代码并打tag上线。步骤如下（依然假设线上tag为release_im_v0.0.9.7，远程仓库最新tag为release_im_v0.0.9.8）：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git fetch --tags                              #查看远程仓库的tag</span><br><span class="line">$ git branch new_branch release_im_v0.0.9.7     #基于线上tag拉分支new_branch</span><br><span class="line">$ git checkout new_branch                       #切到该分支并修改代码解决bug</span><br><span class="line">$ git commit -am &apos;fix bug&apos;                      #tag默认打在最新提交的commit上</span><br><span class="line">$ git tag -a release_im_v0.0.9.9 -m &apos;fix bug&apos;   </span><br><span class="line">$ git diff release_im_v0.0.9.7 release_im_v0.0.9.9</span><br><span class="line">$ git push --tags</span><br></pre></td></tr></table></figure></p>
+<h2 id="git-cherry-pick的用法"><a href="#git-cherry-pick的用法" class="headerlink" title="git cherry-pick的用法"></a>git cherry-pick的用法</h2><p>当需要把某个分支的某次commit应用到另外一个分支，git cherry-pick命令就派上用场了。假设我们现在在a分支上，该分支上有一个commit（假设其哈希码为d986206）需要应用到b分支上，那么可以这么做：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git log --oneline       #查看a分支commit历史找到需要应用到b分支上的commit的哈希码为d986206</span><br><span class="line">$ git show d986206        #确认commit内容</span><br><span class="line">$ git checkout b</span><br><span class="line">$ git cherry-pick d986206</span><br></pre></td></tr></table></figure></p>
+<h2 id="基于线上tag打补丁并上线"><a href="#基于线上tag打补丁并上线" class="headerlink" title="基于线上tag打补丁并上线"></a>基于线上tag打补丁并上线</h2><p>假如我们在自己的test分支修改了很多代码，合到master之后发现master不能上线，而且该分支同时修改了两个相关的线上的tag（例如PC站和手机m站），需要分别把相应的修改应用到相应的tag上，并上线，由于commit的次数比较多，用cherry-pick就比较麻烦，这时我们就需要打补丁了。现在假设PC站线上tag和远程仓库最新tag都是release_www_v3.2.2.6，手机m站线上tag和远程仓库最新tag都是release_m_v3.0.8.3，运用第二部分中的方法基于线上tag分别拉取PC站和m站的分支www-patch和m-patch。<br>首先我们在自己的分支（这里是test分支）运行 git log –oneline 查看commit信息：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fgit_log.png" alt="git log"><br>发现544cf8c（主站获取id）、86721b7（m站获取id）、3971048（获取主站name）和f788477（获取m站name）这四次commit是需要上线的改动，于是我们将当前test分支与fb20a04（建立m类）这次commit进行diff以查看前四个commit的内容，确认无误后就可以打补丁了：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git diff fb20a04 test &gt; patch</span><br></pre></td></tr></table></figure>
+<p>用vim打开patch文件截取部分如下：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fpatch.png" alt="patch"><br>接下来切换到需要应用补丁的分支并应用该补丁：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git checkout www-patch</span><br><span class="line">$ git apply patch           #在www-patch分支应用补丁</span><br><span class="line">$ git diff                  #查看应用补丁之后的diff以确认无误</span><br><span class="line">$ rm patch                  #删除patch文件，git不需要追踪该文件，便于commit</span><br><span class="line">$ git commit -am &apos;apply patch&apos;</span><br><span class="line">$ git tag -a release_www_v3.2.2.7 -m &apos;打补丁上线&apos;</span><br></pre></td></tr></table></figure></p>
+<p>当然也可以把patch文件放在~/目录下，假设代码文件夹也在~/目录下，然后这样打补丁：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git diff fb20a04 test &gt; ~/patch</span><br><span class="line">$ git checkout www-patch</span><br><span class="line">$ patch -p1&lt;~/patch</span><br><span class="line">$ git commit -am &apos;apply patch&apos;</span><br><span class="line">$ git tag -a release_www_v3.2.2.7</span><br></pre></td></tr></table></figure>
+<p>接下来就是打手机m站的tag，这时我们就可以用git cherry-pick方法了，先在www-patch分支查看应用补丁的commit：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fapply_patch.png" alt="apply patch"><br>然后应用到m-patch分支：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git checkout m-patch</span><br><span class="line">$ git cherry-pick 584f3ef</span><br><span class="line">$ git commit -am &apos;apply patch&apos;</span><br><span class="line">$ git tag -a release_m_v3.0.8.4 -m &apos;打补丁上线&apos;</span><br><span class="line">$ git push --tags           #最后把新打的tag都推送到远程仓库以上线</span><br></pre></td></tr></table></figure>
+<h2 id="基于特定的commit打tag"><a href="#基于特定的commit打tag" class="headerlink" title="基于特定的commit打tag"></a>基于特定的commit打tag</h2><p>假如我们想基于cf57ec4（建立www类）这次commit打tag，可以这样做：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git tag -a www0.9.9 cf57ec4 -m &apos;建立www类&apos;</span><br></pre></td></tr></table></figure>
+<p>运行git show www0.9.9命令查看该tag信息，可以看到是基于cf57ec4（建立www类）这次commit打的：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2Fgit%E6%89%93tag%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%8A%80%E5%B7%A7%2Fshow_tag.png" alt="show tag"><br>打tag时如果不指定commit，则默认基于当前分支的最新一次commit打。</p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次go语言debug调优实战</title>
+    <url>/2021/03/27/golang-debug-optimize/</url>
+    <content><![CDATA[<p>在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
+<a id="more"></a>
+<h2 id="Linux调试"><a href="#Linux调试" class="headerlink" title="Linux调试"></a>Linux调试</h2><h3 id="系统内存占用"><a href="#系统内存占用" class="headerlink" title="系统内存占用"></a>系统内存占用</h3><p>在确认不是MQ连接的问题之后，先是怀疑OOM了，用free看了下机器内存使用情况，从”-/+ buffers/cache”这一行可以看到能够挪用的内存还有9869M，不是OOM。<br><img src="/images/go-debug/free.jpg" alt="free结果"><br>查看日志也确认没有OOM信息：<br><img src="/images/go-debug/oom.jpg" alt="OOM日志"></p>
+<h3 id="程序内存占用"><a href="#程序内存占用" class="headerlink" title="程序内存占用"></a>程序内存占用</h3><p>ps和top看下，占用的内存也并不高：<br><img src="/images/go-debug/ps.jpg" alt="ps"><br><img src="/images/go-debug/top.jpg" alt="ps"></p>
+<h3 id="查看进程栈信息"><a href="#查看进程栈信息" class="headerlink" title="查看进程栈信息"></a>查看进程栈信息</h3><h2 id="go-pprof调试"><a href="#go-pprof调试" class="headerlink" title="go pprof调试"></a>go pprof调试</h2><p>在程序中加上pprof调试代码之后，查看goroutine堆栈信息，发现有一个异常信息：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">goroutine 17 [chan send, 29 minutes, locked to thread]</span><br></pre></td></tr></table></figure></p>
+<p>堆栈信息开始于MQ订阅，阻塞于Dispatcher写入filter channel的时候，而Filter模块只是进行参数的判断过滤，没有进行网络请求或者IO操作，应该处理的很快，那可能是下游的store channel阻塞了，因为Store模块会请求Redis和MySQL，有网络请求和IO操作，处理比较慢，而Store模块是串行处理store channel里的数据的。于是将Store改为并行处理store channel，读取channel里的数据之后用goroutine进行处理。同时将上下游channel的大小都从1024改为10240，提高channel容量，有更大的缓冲空间。改完重新编译运行，发现MQ消费不会中断了！问题得以解决。<br><img src="/images/go-debug/stack-trace.jpg" alt="stack-trace"></p>
+<h2 id="附：Linux几个调试命令输出内容说明"><a href="#附：Linux几个调试命令输出内容说明" class="headerlink" title="附：Linux几个调试命令输出内容说明"></a>附：Linux几个调试命令输出内容说明</h2><h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p><img src="/images/go-debug/free.jpg" alt="free结果"></p>
+<h4 id="输出结果对应字段说明"><a href="#输出结果对应字段说明" class="headerlink" title="输出结果对应字段说明"></a>输出结果对应字段说明</h4><ul>
+<li>Mem：内存的使用情况</li>
+<li>-/+ buffers/cache：表示物理内存已用多少，可用多少</li>
+<li>Swap：交换空间的使用情况</li>
+</ul>
+<h4 id="关于buffers和cached的区别"><a href="#关于buffers和cached的区别" class="headerlink" title="关于buffers和cached的区别"></a>关于buffers和cached的区别</h4><ul>
+<li>A buffer is something that has yet to be “written” to disk.</li>
+<li>A cache is something that has been “read” from the disk and stored for later use.</li>
+</ul>
+<h4 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h4><ul>
+<li>Mem<ul>
+<li>total = used + free</li>
+</ul>
+</li>
+<li>-/+ buffers/cache<ul>
+<li>used = Mem used - Mem buffers - Mem cached</li>
+<li>free = Mem free + Mem buffers + Mem cached</li>
+</ul>
+</li>
+</ul>
+<h3 id="ps-aux"><a href="#ps-aux" class="headerlink" title="ps aux"></a>ps aux</h3><h4 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h4><p><img src="/images/go-debug/ps.jpg" alt="ps"></p>
+<h4 id="输出结果对应字段说明-1"><a href="#输出结果对应字段说明-1" class="headerlink" title="输出结果对应字段说明"></a>输出结果对应字段说明</h4><ul>
+<li>USER：进程的所有者</li>
+<li>PID：进程ID号</li>
+<li>%CPU：CPU占用率 </li>
+<li>%MEM：内存占用率</li>
+<li>VSZ：虚拟内存使用量(单位KB)</li>
+<li>RSS：占用的固定内存量(单位KB)</li>
+<li>TTY：所在终端 </li>
+<li>STAT：进程状态</li>
+<li>START：被启动的时间</li>
+<li>TIME：实际使用CPU的时间 </li>
+<li>COMMAND：命令名称与参数</li>
+</ul>
+<h4 id="进程状态说明："><a href="#进程状态说明：" class="headerlink" title="进程状态说明："></a>进程状态说明：</h4><p>D    Uninterruptible sleep (usually IO)<br>R    Running or runnable (on run queue)<br>S    Interruptible sleep (waiting for an event to complete)<br>T    Stopped, either by a job control signal or because it is being traced.<br>W    paging (not valid since the 2.6.xx kernel)<br>X    dead (should never be seen)<br>Z    Defunct (“zombie”) process, terminated but not reaped by its parent.</p>
+<p>For BSD formats and when the stat keyword is used, additional characters may be displayed:<br>&lt;    high-priority (not nice to other users)<br>N    low-priority (nice to other users)<br>L    has pages locked into memory (for real-time and custom IO)<br>s    is a session leader<br>l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)<br>+    is in the foreground process group</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/ouyang_peng/article/details/84292776" target="_blank" rel="noopener">【Linux学习】Linux free 命令学习</a></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Go</tag>
+        <tag>Pprof</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/404.html</url>
+    <content><![CDATA[<html>
+<head></head>
+<body>
+<iframe scrolling="no" frameborder="0" src="https://yibo.iyiyun.com/Home/Distribute/ad404/key/1131755" width="654" height="470" style="display:block; margin: auto"></iframe>
+</body>
+</html>
+]]></content>
+  </entry>
+  <entry>
+    <title>All tags</title>
+    <url>/tags/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>All categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>about</title>
+    <url>/about/index.html</url>
+    <content><![CDATA[<h2 id="brief"><a href="#brief" class="headerlink" title="brief"></a>brief</h2><ul>
+<li>我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！</li>
+</ul>
+<h2 id="contact"><a href="#contact" class="headerlink" title="contact"></a>contact</h2><ul>
+<li><a href="mailto:zuolicong@foxmail.com" target="_blank" rel="noopener">zuolicong@foxmail.com</a></li>
+</ul>
+]]></content>
+  </entry>
+</search>
