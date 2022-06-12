@@ -284,7 +284,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2016/01/23/git-tag/">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2017/04/26/im-redis-to-codis/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zuolicong">
@@ -303,7 +303,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/01/23/git-tag/" itemprop="url">git打tag的方法和技巧</a></h2>
+                <a class="post-title-link" href="/2017/04/26/im-redis-to-codis/" itemprop="url">IM系统redis迁移到codis实践</a></h2>
         
 
         <div class="post-meta">
@@ -315,8 +315,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-01-23T20:51:42+08:00">
-                2016-01-23
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-26T22:42:30+08:00">
+                2017-04-26
               </time>
             
 
@@ -338,8 +338,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Git/" itemprop="url" rel="index">
-                    <span itemprop="name">Git</span>
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
                   </a>
                 </span>
 
@@ -356,8 +356,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/01/23/git-tag/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2016/01/23/git-tag/" itemprop="commentCount"></span>
+                <a href="/2017/04/26/im-redis-to-codis/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2017/04/26/im-redis-to-codis/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -365,7 +365,7 @@
 
           
           
-             <span id="/2016/01/23/git-tag/" class="leancloud_visitors" data-flag-title="git打tag的方法和技巧">
+             <span id="/2017/04/26/im-redis-to-codis/" class="leancloud_visitors" data-flag-title="IM系统redis迁移到codis实践">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -397,12 +397,10 @@
 
       
         
-          <p>使用git作为版本控制工具，在代码上线之前需要打tag，便于团队有条不紊地上线代码。在这里总结一下打tag的方法与可能用到的技巧。</p>
-<h2 id="打tag并上线的常规流程"><a href="#打tag并上线的常规流程" class="headerlink" title="打tag并上线的常规流程"></a>打tag并上线的常规流程</h2><p>一般是基于master分支打tag并推送tag到远程仓库，然后上线。要上线的代码合到master分支上之后，切换到master分支，pull最新代码，然后查看远程仓库的最新tag（假设为release_im_v0.0.9.8），在其基础上打tag release_im_v0.0.9.9。然后查看线上tag是哪一个（假设为release_im_v0.0.9.7），将新打的tag与线上tag进行diff，看代码有没有冲突，或者有没有别人合到master上但是暂时还不能上线的代码，如果没有问题，就可以把tag推送到远程仓库，然后请QA君帮忙上线。需要注意的是不能直接在线上tag的基础上加一作为新的tag，因为在你打tag期间团队其他人可能也打了tag，只是还没来得及上线而已，为避免冲突，需要基于远程仓库的最新tag打新tag。打tag并上线的流程如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">$ git pull</span><br><span class="line">$ git tag|grep im|tail                                 #查看远程仓库含有im的最新tag</span><br><span class="line">$ git tag -a release_im_v0.0.9.9 -m &apos;im咨询记录更改&apos;     #一般打含有附注的标签</span><br><span class="line">$ git diff release_im_v0.0.9.7 release_im_v0.0.9.9     #如果改动比较多，也可以在gitlab上进行diff（当然要先push）</span><br><span class="line">#如果diff没有问题，就可以把tag推送到远程仓库，远程仓库如果是origin，则可省略origin</span><br><span class="line">$ git push [origin] release_im_v0.0.9.9                #推送具体的tag到远程仓库</span><br><span class="line">$ git push [origin] --tags                             #一次推送所有的tag到远程仓库</span><br></pre></td></tr></table></figure>
+          <p>公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人、最近一条消息、未读消息数、黑名单、频率及敏感词限制、Token等，而消息拉链、最近一条消息和未读消息数是进行持久存储的，因此这些数据需要进行迁移。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/01/23/git-tag/#more" rel="contents">
+            <a class="btn" href="/2017/04/26/im-redis-to-codis/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -503,7 +501,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -514,7 +512,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
