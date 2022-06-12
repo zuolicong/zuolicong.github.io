@@ -1,40 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>hexo生成的html文件为空问题解决</title>
-    <url>/2022/06/12/hexo-generate-html-empty/</url>
-    <content><![CDATA[<p>用hexo搭建了一个个人博客，最近在更新并上传到github之后发现上传的html文件都是空的，大小为0kb，本地的html文件也是空的，但是本地启动hexo server，访问<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 是正常的，在网上搜了不少解决方法，发现很多都解决不了问题，或者表述不清楚，踩了不少坑终于解决了，在这里记录一下。</p>
-<a id="more"></a>
-<h2 id="1、网上的方案都没解决问题"><a href="#1、网上的方案都没解决问题" class="headerlink" title="1、网上的方案都没解决问题"></a>1、网上的方案都没解决问题</h2><h3 id="1-1-node版本升级"><a href="#1-1-node版本升级" class="headerlink" title="1.1 node版本升级"></a>1.1 node版本升级</h3><p>我的node版本是14.xxx，看网上有些说需要把node升级到稳定版本，于是执行以下命令<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo npm i -g n</span><br><span class="line">sudo n stable</span><br></pre></td></tr></table></figure></p>
-<p>此时发现node升级到了v16.15.1，删除原来的html文件重新生成，发现html还是空的<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br></pre></td></tr></table></figure></p>
-<h3 id="1-2-hexo-debug"><a href="#1-2-hexo-debug" class="headerlink" title="1.2 hexo debug"></a>1.2 hexo debug</h3><p>看有人说可以运行以下命令debug下看看有啥报错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g --debug</span><br></pre></td></tr></table></figure></p>
-<p>运行之后发现有三个地方有提示：</p>
-<ul>
-<li>报错1<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(node:37667) Warning: Accessing non-existent property &apos;lineno&apos; of module exports inside circular dependency</span><br><span class="line">(Use `node --trace-warnings ...` to show where the warning was created)</span><br><span class="line">(node:37667) Warning: Accessing non-existent property &apos;column&apos; of module exports inside circular dependency</span><br><span class="line">(node:37667) Warning: Accessing non-existent property &apos;filename&apos; of module exports inside circular dependency</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>找了下解决方案说是在node_modules/stylus/lib/nodes/index.js文件头部添加以下内容，添加之后还是不行<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exports.lineno = null;</span><br><span class="line">exports.column = null;</span><br><span class="line">exports.filename = null;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>报错2<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Version 9 of Highlight.js has reached EOL and is no longer supported.</span><br><span class="line">Please upgrade or ask whatever dependency you are using to upgrade.</span><br><span class="line">https://github.com/highlightjs/highlight.js/issues/2877</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>把博客根目录下的package.json文件里的Highlight.js版本改为11.5.1，然后npm install，hexo重新生成还是不行</p>
-<ul>
-<li>报错3<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">16:56:02.362 WARN  ===============================================================</span><br><span class="line">16:56:02.362 WARN  ========================= ATTENTION! ==========================</span><br><span class="line">16:56:02.362 WARN  ===============================================================</span><br><span class="line">16:56:02.362 WARN   NexT repository is moving here: https://github.com/theme-next</span><br><span class="line">16:56:02.363 WARN  ===============================================================</span><br><span class="line">16:56:02.363 WARN   It&apos;s rebase to v6.0.0 and future maintenance will resume there</span><br><span class="line">16:56:02.363 WARN  ===============================================================</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>这个是hexo的NexT主题代码迁移提示，不升级暂时也没问题</p>
-<h3 id="1-3-node版本降级"><a href="#1-3-node版本降级" class="headerlink" title="1.3 node版本降级"></a>1.3 node版本降级</h3><p>最后发现是node版本太高，hexo不支持，需要把node版本改为v12.xxx版本，注意不是大于v12就行，于是把node版本改为v12.22.12后解决问题。我用的是Mac，通过brew安装的node，于是执行以下命令重新安装node v12：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">brew search node # 查找node可安装的版本，发现有node@12</span><br><span class="line">brew uninstall node # 卸载原node</span><br><span class="line">brew install node@12 # 安装新node</span><br></pre></td></tr></table></figure></p>
-<h2 id="2、参考"><a href="#2、参考" class="headerlink" title="2、参考"></a>2、参考</h2><p><a href="https://blog.tcs-y.com/2020/04/26/hexo-index-0kb/" target="_blank" rel="noopener">解决hexo generate 生成的时候index.html为0kb空白的问题</a><br><a href="https://blog.csdn.net/qq_45865697/article/details/121892998" target="_blank" rel="noopener">hexo deploy上传github全是空白文件问题解决</a></p>
-]]></content>
-      <categories>
-        <category>Blog</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>IM系统redis迁移到codis实践</title>
     <url>/2017/04/26/im-redis-to-codis/</url>
     <content><![CDATA[<p>公司决定使用自己搭建的codis集群代替阿里云的redis，二者性能差别不大，但是自运维的codis成本更低，同时也借这次迁移来规范key的命名，统一命名成”系统(必须):子系统(必须):存储类型(可选，cache|storage):数据(必须):版本(可选):其它(可选)”的形式，方便维护。我负责IM即时通信系统的redis迁移。IM使用redis的地方很多，并且数据量很大，例如消息拉链、联系人、最近一条消息、未读消息数、黑名单、频率及敏感词限制、Token等，而消息拉链、最近一条消息和未读消息数是进行持久存储的，因此这些数据需要进行迁移。</p>
@@ -78,33 +44,55 @@
       </tags>
   </entry>
   <entry>
-    <title>Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程</title>
-    <url>/2020/05/03/py2-py3-yd-trouble-for-mac/</url>
-    <content><![CDATA[<p>最近用Mac brew安装一些包的时候顺带把Python从2.7升级到了3.7，导致之前在Python2下安装的很多包用不了了，例如yd、ipython、musicbox等：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~</span><br><span class="line">╰─$ musicbox</span><br><span class="line">zsh: /usr/local/bin/musicbox: bad interpreter: /usr/local/opt/python/bin/python2.7: no such file or directory</span><br></pre></td></tr></table></figure></p>
-<p>平时用yd命令翻译单词还是挺方便的，于是就想着索性用pip3再安装一遍，反正Python2后面也要被淘汰了。然而以为很简单的事，却一顿折腾。运行pip3 install yd先报了这么一个错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &apos;version&apos;</span><br></pre></td></tr></table></figure></p>
+    <title>hexo生成的html文件为空问题解决</title>
+    <url>/2022/06/12/hexo-generate-html-empty/</url>
+    <content><![CDATA[<p>用hexo搭建了一个个人博客，最近在更新并上传到github之后发现上传的html文件都是空的，大小为0kb，本地的html文件也是空的，但是本地启动hexo server，访问<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 是正常的，在网上搜了不少解决方法，发现很多都解决不了问题，或者表述不清楚，踩了不少坑终于解决了，在这里记录一下。</p>
 <a id="more"></a>
-<h2 id="踩坑历程"><a href="#踩坑历程" class="headerlink" title="踩坑历程"></a>踩坑历程</h2><p>既然没有version包，那就再安装一个呗，于是pip3 install version，然而又报这个：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">importError: cannot import name &apos;izip_longest&apos;</span><br></pre></td></tr></table></figure></p>
-<p>在网上查了下，itertools.izip在pyhton3中已被去掉了，zip成为内置的方法。解决方法是找到version包源文件中使用了”from itertools import izip_longest”的文件， 将izip_longest改为zip_longest，再手动安装，然而/usr/local/lib/python3.7/site-packages目录下也没有pip3下载的version包源文件，我试着用pip3 download version，仍然报上面那个错。看来只能去官网下载了：<a href="https://pypi.org/project/version/" target="_blank" rel="noopener">https://pypi.org/project/version/</a></p>
-<p>官网的version包链接到了<a href="https://github.com/keleshev/version" target="_blank" rel="noopener">https://github.com/keleshev/version</a> ，可以直接下载zip文件，然后执行以下命令就可以安装version了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~/python-code</span><br><span class="line">╰─$ pip3 install ./version-master.zip</span><br><span class="line">Processing ./version-master.zip</span><br><span class="line">Building wheels for collected packages: version</span><br><span class="line">  Building wheel for version (setup.py) ... done</span><br><span class="line">  Created wheel for version: filename=version-0.1.2-py3-none-any.whl size=3249 sha256=d7f32866382d5d711c6e72e0a877ac2062fc7f25bed901567cbabd9168b17abc</span><br><span class="line">  Stored in directory: /Users/zuolicong/Library/Caches/pip/wheels/25/58/94/317ecc66e2db4df75bb89ea3bf33401b3de1360fdb984f0428</span><br><span class="line">Successfully built version</span><br><span class="line">Installing collected packages: version</span><br><span class="line">Successfully installed version-0.1.2</span><br></pre></td></tr></table></figure></p>
-<p>可以发现官网上的version包其实对Python2和Python3做了兼容：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> sys.version_info &gt;= (<span class="number">3</span>, <span class="number">0</span>):</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> zip_longest <span class="keyword">as</span> izip_longest</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> izip_longest</span><br></pre></td></tr></table></figure></p>
-<p>再运行pip3 install yd命令，bingo，安装成功，然而我还是太年轻，使用yd的时候又遇到一系列兼容问题：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 131</span><br><span class="line">    print output</span><br><span class="line">               ^</span><br><span class="line">SyntaxError: Missing parentheses in call to 'print'. Did you mean print(output)?</span><br></pre></td></tr></table></figure></p>
-<p>Python2中的”print output”在Python3中需要改成”print(output)”</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">ModuleNotFoundError: No module named 'environ'</span><br></pre></td></tr></table></figure>
-<p>继续pip3 install environ</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 114</span><br><span class="line">    raise ValueError, "No frame marked with %s." % fname</span><br><span class="line">                    ^</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>Python3中raise用法需要改成：raise ValueError(“No frame marked with %s.” % fname)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 250, in &lt;module&gt;</span><br><span class="line">    ctx = Environ(None)</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 105, in __init__</span><br><span class="line">    elif isinstance(frame, basestring):</span><br><span class="line">NameError: name 'basestring' is not defined</span><br></pre></td></tr></table></figure>
-<p>Python3中”basestring”需要改成”str”</p>
-<p>然而无解的来了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 7, in &lt;module&gt;</span><br><span class="line">    import ydsearch</span><br><span class="line">ModuleNotFoundError: No module named 'ydsearch'</span><br></pre></td></tr></table></figure></p>
-<p>执行pip3 install ydsearch报：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ERROR: Could not find a version that satisfies the requirement ydsearch (from versions: none)</span><br><span class="line">ERROR: No matching distribution found for ydsearch</span><br></pre></td></tr></table></figure></p>
-<p>这么说来Python3压根就不支持yd包，害我还折腾了这么长时间。于是想到go是不是有类似的包可以替代，于是github上搜了下发现了这个：<a href="https://github.com/TimothyYe/ydict" target="_blank" rel="noopener">https://github.com/TimothyYe/ydict</a> ，于是<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go get -v github.com/TimothyYe/ydict</span><br></pre></td></tr></table></figure></p>
-<p>嗯，真香。</p>
-<h2 id="一点想法"><a href="#一点想法" class="headerlink" title="一点想法"></a>一点想法</h2><p>只能说Python 2和3兼容性真的太差，如果项目想从2升级到3成本太高，导致生态有点割裂。感觉设计者初期没太想好。不过我等屁民也不好评判大佬当初的想法，只能尽量避免踩坑，或者寻求可替代的方案，比如go。当然不同的语言使用的场景不同，适合的才是最好的。</p>
+<h2 id="1、踩坑历程"><a href="#1、踩坑历程" class="headerlink" title="1、踩坑历程"></a>1、踩坑历程</h2><h3 id="1-1-node版本升级"><a href="#1-1-node版本升级" class="headerlink" title="1.1 node版本升级"></a>1.1 node版本升级</h3><p>我的node版本是14.xxx，看网上有些说需要把node升级到稳定版本，于是执行以下命令<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo npm i -g n</span><br><span class="line">sudo n stable</span><br></pre></td></tr></table></figure></p>
+<p>此时发现node升级到了v16.15.1，删除原来的html文件重新生成，发现html还是空的<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br></pre></td></tr></table></figure></p>
+<h3 id="1-2-hexo-debug"><a href="#1-2-hexo-debug" class="headerlink" title="1.2 hexo debug"></a>1.2 hexo debug</h3><p>看有人说可以运行以下命令debug下看看有啥报错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g --debug</span><br></pre></td></tr></table></figure></p>
+<p>运行之后发现有三个地方有提示：</p>
+<ul>
+<li>报错1<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(node:37667) Warning: Accessing non-existent property &apos;lineno&apos; of module exports inside circular dependency</span><br><span class="line">(Use `node --trace-warnings ...` to show where the warning was created)</span><br><span class="line">(node:37667) Warning: Accessing non-existent property &apos;column&apos; of module exports inside circular dependency</span><br><span class="line">(node:37667) Warning: Accessing non-existent property &apos;filename&apos; of module exports inside circular dependency</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>找了下解决方案说是在node_modules/stylus/lib/nodes/index.js文件头部添加以下内容，添加之后还是不行<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exports.lineno = null;</span><br><span class="line">exports.column = null;</span><br><span class="line">exports.filename = null;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>报错2<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Version 9 of Highlight.js has reached EOL and is no longer supported.</span><br><span class="line">Please upgrade or ask whatever dependency you are using to upgrade.</span><br><span class="line">https://github.com/highlightjs/highlight.js/issues/2877</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>把博客根目录下的package.json文件里的Highlight.js版本改为11.5.1，然后npm install，hexo重新生成还是不行</p>
+<ul>
+<li>报错3<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">16:56:02.362 WARN  ===============================================================</span><br><span class="line">16:56:02.362 WARN  ========================= ATTENTION! ==========================</span><br><span class="line">16:56:02.362 WARN  ===============================================================</span><br><span class="line">16:56:02.362 WARN   NexT repository is moving here: https://github.com/theme-next</span><br><span class="line">16:56:02.363 WARN  ===============================================================</span><br><span class="line">16:56:02.363 WARN   It&apos;s rebase to v6.0.0 and future maintenance will resume there</span><br><span class="line">16:56:02.363 WARN  ===============================================================</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这个是hexo的NexT主题代码迁移提示，不升级暂时也没问题</p>
+<h3 id="1-3-正解：node版本降级"><a href="#1-3-正解：node版本降级" class="headerlink" title="1.3 正解：node版本降级"></a>1.3 正解：node版本降级</h3><p>最后发现是node版本太高，hexo不支持，需要把node版本改为v12.xxx版本，注意不是大于v12就行，于是把node版本改为v12.22.12后解决问题。我用的是Mac，通过brew安装的node，于是执行以下命令重新安装node v12：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">brew search node # 查找node可安装的版本，发现有node@12</span><br><span class="line">brew uninstall node # 卸载原node</span><br><span class="line">brew install node@12 # 安装新node</span><br></pre></td></tr></table></figure></p>
+<h2 id="2、参考"><a href="#2、参考" class="headerlink" title="2、参考"></a>2、参考</h2><p><a href="https://blog.tcs-y.com/2020/04/26/hexo-index-0kb/" target="_blank" rel="noopener">解决hexo generate 生成的时候index.html为0kb空白的问题</a><br><a href="https://blog.csdn.net/qq_45865697/article/details/121892998" target="_blank" rel="noopener">hexo deploy上传github全是空白文件问题解决</a></p>
 ]]></content>
+      <categories>
+        <category>Blog</category>
+      </categories>
       <tags>
-        <tag>Python</tag>
-        <tag>pip</tag>
-        <tag>Go</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mac docker内请求http(s)失败的问题处理</title>
+    <url>/2017/12/23/docker-for-mac-localhost-issue/</url>
+    <content><![CDATA[<p>新建了一个docker容器，发现在容器内运行go get命令时会报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# go get -u -v github.com/nsf/gocode</span><br><span class="line">github.com/nsf/gocode (download)</span><br><span class="line"># cd /home/work/data/www/go/src/github.com/nsf/gocode; git pull --ff-only</span><br><span class="line">error: Failed connect to github.com:8888; Operation now in progress while accessing https://github.com/nsf/gocode/info/refs</span><br><span class="line"></span><br><span class="line">fatal: HTTP request failed</span><br><span class="line">package github.com/nsf/gocode: exit status 1</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>访问github.com时莫名其妙的多了一个8888端口，查了相关资料发现是Mac新版的docker加了个http_proxy代理：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# echo $http_proxy</span><br><span class="line">docker.for.mac.localhost:8888</span><br></pre></td></tr></table></figure></p>
+<p>找了很长时间也没发现怎么去掉这个http_proxy，最后发现可以将http_proxy这个环境变量定义为空，就可以把原来那个值覆盖掉，于是在~/.bash_profile加上<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export http_proxy=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>再source ~/.bash_profile就可以了。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Mac</tag>
       </tags>
   </entry>
   <entry>
@@ -165,6 +153,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程</title>
+    <url>/2020/05/03/py2-py3-yd-trouble-for-mac/</url>
+    <content><![CDATA[<p>最近用Mac brew安装一些包的时候顺带把Python从2.7升级到了3.7，导致之前在Python2下安装的很多包用不了了，例如yd、ipython、musicbox等：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~</span><br><span class="line">╰─$ musicbox</span><br><span class="line">zsh: /usr/local/bin/musicbox: bad interpreter: /usr/local/opt/python/bin/python2.7: no such file or directory</span><br></pre></td></tr></table></figure></p>
+<p>平时用yd命令翻译单词还是挺方便的，于是就想着索性用pip3再安装一遍，反正Python2后面也要被淘汰了。然而以为很简单的事，却一顿折腾。运行pip3 install yd先报了这么一个错：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &apos;version&apos;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h2 id="踩坑历程"><a href="#踩坑历程" class="headerlink" title="踩坑历程"></a>踩坑历程</h2><p>既然没有version包，那就再安装一个呗，于是pip3 install version，然而又报这个：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">importError: cannot import name &apos;izip_longest&apos;</span><br></pre></td></tr></table></figure></p>
+<p>在网上查了下，itertools.izip在pyhton3中已被去掉了，zip成为内置的方法。解决方法是找到version包源文件中使用了”from itertools import izip_longest”的文件， 将izip_longest改为zip_longest，再手动安装，然而/usr/local/lib/python3.7/site-packages目录下也没有pip3下载的version包源文件，我试着用pip3 download version，仍然报上面那个错。看来只能去官网下载了：<a href="https://pypi.org/project/version/" target="_blank" rel="noopener">https://pypi.org/project/version/</a></p>
+<p>官网的version包链接到了<a href="https://github.com/keleshev/version" target="_blank" rel="noopener">https://github.com/keleshev/version</a> ，可以直接下载zip文件，然后执行以下命令就可以安装version了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~/python-code</span><br><span class="line">╰─$ pip3 install ./version-master.zip</span><br><span class="line">Processing ./version-master.zip</span><br><span class="line">Building wheels for collected packages: version</span><br><span class="line">  Building wheel for version (setup.py) ... done</span><br><span class="line">  Created wheel for version: filename=version-0.1.2-py3-none-any.whl size=3249 sha256=d7f32866382d5d711c6e72e0a877ac2062fc7f25bed901567cbabd9168b17abc</span><br><span class="line">  Stored in directory: /Users/zuolicong/Library/Caches/pip/wheels/25/58/94/317ecc66e2db4df75bb89ea3bf33401b3de1360fdb984f0428</span><br><span class="line">Successfully built version</span><br><span class="line">Installing collected packages: version</span><br><span class="line">Successfully installed version-0.1.2</span><br></pre></td></tr></table></figure></p>
+<p>可以发现官网上的version包其实对Python2和Python3做了兼容：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> sys.version_info &gt;= (<span class="number">3</span>, <span class="number">0</span>):</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> zip_longest <span class="keyword">as</span> izip_longest</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">from</span> itertools <span class="keyword">import</span> izip_longest</span><br></pre></td></tr></table></figure></p>
+<p>再运行pip3 install yd命令，bingo，安装成功，然而我还是太年轻，使用yd的时候又遇到一系列兼容问题：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 131</span><br><span class="line">    print output</span><br><span class="line">               ^</span><br><span class="line">SyntaxError: Missing parentheses in call to 'print'. Did you mean print(output)?</span><br></pre></td></tr></table></figure></p>
+<p>Python2中的”print output”在Python3中需要改成”print(output)”</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">ModuleNotFoundError: No module named 'environ'</span><br></pre></td></tr></table></figure>
+<p>继续pip3 install environ</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 114</span><br><span class="line">    raise ValueError, "No frame marked with %s." % fname</span><br><span class="line">                    ^</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>Python3中raise用法需要改成：raise ValueError(“No frame marked with %s.” % fname)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 4, in &lt;module&gt;</span><br><span class="line">    import environ</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 250, in &lt;module&gt;</span><br><span class="line">    ctx = Environ(None)</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/environ.py", line 105, in __init__</span><br><span class="line">    elif isinstance(frame, basestring):</span><br><span class="line">NameError: name 'basestring' is not defined</span><br></pre></td></tr></table></figure>
+<p>Python3中”basestring”需要改成”str”</p>
+<p>然而无解的来了：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "/usr/local/bin/yd", line 5, in &lt;module&gt;</span><br><span class="line">    from yd.yd import main</span><br><span class="line">  File "/usr/local/lib/python3.7/site-packages/yd/yd.py", line 7, in &lt;module&gt;</span><br><span class="line">    import ydsearch</span><br><span class="line">ModuleNotFoundError: No module named 'ydsearch'</span><br></pre></td></tr></table></figure></p>
+<p>执行pip3 install ydsearch报：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ERROR: Could not find a version that satisfies the requirement ydsearch (from versions: none)</span><br><span class="line">ERROR: No matching distribution found for ydsearch</span><br></pre></td></tr></table></figure></p>
+<p>这么说来Python3压根就不支持yd包，害我还折腾了这么长时间。于是想到go是不是有类似的包可以替代，于是github上搜了下发现了这个：<a href="https://github.com/TimothyYe/ydict" target="_blank" rel="noopener">https://github.com/TimothyYe/ydict</a> ，于是<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go get -v github.com/TimothyYe/ydict</span><br></pre></td></tr></table></figure></p>
+<p>嗯，真香。</p>
+<h2 id="一点想法"><a href="#一点想法" class="headerlink" title="一点想法"></a>一点想法</h2><p>只能说Python 2和3兼容性真的太差，如果项目想从2升级到3成本太高，导致生态有点割裂。感觉设计者初期没太想好。不过我等屁民也不好评判大佬当初的想法，只能尽量避免踩坑，或者寻求可替代的方案，比如go。当然不同的语言使用的场景不同，适合的才是最好的。</p>
+]]></content>
+      <tags>
+        <tag>Go</tag>
+        <tag>Python</tag>
+        <tag>pip</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>以旧换新项目中的微服务实践</title>
     <url>/2018/05/01/microservice-in-old-for-new/</url>
     <content><![CDATA[<p>微服务在近几年比较火，公司也在使用微服务架构。我在最近参与开发的以旧换新项目中也进行了一些微服务相关的实践，在这里总结一下遇到的问题和收获。</p>
@@ -203,21 +221,26 @@
       </tags>
   </entry>
   <entry>
-    <title>Mac docker内请求http(s)失败的问题处理</title>
-    <url>/2017/12/23/docker-for-mac-localhost-issue/</url>
-    <content><![CDATA[<p>新建了一个docker容器，发现在容器内运行go get命令时会报错：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# go get -u -v github.com/nsf/gocode</span><br><span class="line">github.com/nsf/gocode (download)</span><br><span class="line"># cd /home/work/data/www/go/src/github.com/nsf/gocode; git pull --ff-only</span><br><span class="line">error: Failed connect to github.com:8888; Operation now in progress while accessing https://github.com/nsf/gocode/info/refs</span><br><span class="line"></span><br><span class="line">fatal: HTTP request failed</span><br><span class="line">package github.com/nsf/gocode: exit status 1</span><br></pre></td></tr></table></figure>
+    <title>用gdb调试c++进程段错误(segmentation fault)</title>
+    <url>/2022/06/13/gdb-debug-segmentation-fault/</url>
+    <content><![CDATA[<p>最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[1]    21067 segmentation fault  ./bin/test_process</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>
-<p>访问github.com时莫名其妙的多了一个8888端口，查了相关资料发现是Mac新版的docker加了个http_proxy代理：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# echo $http_proxy</span><br><span class="line">docker.for.mac.localhost:8888</span><br></pre></td></tr></table></figure></p>
-<p>找了很长时间也没发现怎么去掉这个http_proxy，最后发现可以将http_proxy这个环境变量定义为空，就可以把原来那个值覆盖掉，于是在~/.bash_profile加上<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export http_proxy=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
-<p>再source ~/.bash_profile就可以了。</p>
+<h2 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h2><p>先看了下运行目录下没有生成core文件，一般机器默认不生成core文件（很多Linux发行版在默认时禁止生成核心文件），执行以下命令重新运行后生成了core文件<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ulimit -c unlimited</span><br></pre></td></tr></table></figure></p>
+<p>运行以下命令进行gdb调试<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span> gdb+进程+core文件</span><br><span class="line">gdb ./bin/test_process ./core.7455</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 或者gdb+进程，再执行run</span><br><span class="line">gdb ./bin/test_process</span><br><span class="line">run</span><br></pre></td></tr></table></figure></p>
+<p>出现了以下报错信息：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Program received signal SIGSEGV, Segmentation fault.</span><br><span class="line">[Switching to Thread 0x7fffec133700 (LWP 8282)]</span><br><span class="line">0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">266	test-group/test-process/src/group.cpp: No such file or directory.</span><br><span class="line">	in test-group/test-process/src/group.cpp</span><br></pre></td></tr></table></figure></p>
+<p>执行backtrace（或者bt）显示堆栈信息：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(gdb) backtrace</span><br><span class="line">#0  0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">#1  0x00000000008e7d1a in mbdstrgy::push::GroupProcessor::process() (this=0x33bde10) at test-group/test-process/src/group.cpp:334</span><br><span class="line">#2  0x00007ffff7df316f in ?? () from /opt/compiler/gcc-8.2/lib/libstdc++.so.6</span><br><span class="line">#3  0x00007ffff7fbeda4 in start_thread () at pthread_create.c:333</span><br><span class="line">#4  0x00007ffff7b5432d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure></p>
+<p>执行frame查看指定的帧（以#开头的行），由于源文件没有对应上，这里没有显示出具体的代码<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(gdb) frame 0</span><br><span class="line">#0  mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:265</span><br><span class="line">265	test-group/test-process/src/group.cpp: No such file or directory.</span><br><span class="line">	in test-group/test-process/src/group.cpp</span><br></pre></td></tr></table></figure></p>
+<p>执行print+变量名可以查看当前context下某个变量的值，这里打印lr_strategy_ptr，发现是 0x0，是个空指针<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(gdb) print lr_strategy_ptr</span><br><span class="line">$1 = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">  get() = 0x0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>执行backtrace full完全显示函数之间相互调用时传递的参数值和函数的内部变量值<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(gdb) backtrace full</span><br><span class="line">#0  0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">        lr_strategy_ptr = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        adjust_ptr = std::shared_ptr&lt;mbdstrgy::push::Rerank&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        unique_key = &lt;value optimized out&gt;</span><br><span class="line">        nid = &lt;value optimized out&gt;</span><br><span class="line">        taskid = &lt;value optimized out&gt;</span><br><span class="line">        score = 8.1749536922780693e-315</span><br><span class="line">        iter = &lt;value optimized out&gt;</span><br><span class="line">#1  0x00000000008e7d1a in mbdstrgy::push::GroupProcessor::process() (this=0x33bde10) at test-group/test-process/src/group.cpp:334</span><br><span class="line">        operator_pack = std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x56d6ea50</span><br><span class="line">        &#125;</span><br><span class="line">        logeveryn_329 = 22891</span><br><span class="line">        logeveryn_sc_329 = 100</span><br><span class="line">        logeveryn_c_329 = &lt;value optimized out&gt;</span><br><span class="line">        new_task_score = std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x541d57b0</span><br><span class="line">        &#125;</span><br><span class="line">        count = 157</span><br><span class="line">#2  0x00007ffff7df316f in ?? () from /opt/compiler/gcc-8.2/lib/libstdc++.so.6</span><br><span class="line">No symbol table info available.</span><br><span class="line">#3  0x00007ffff7fbeda4 in start_thread () at pthread_create.c:333</span><br><span class="line">No symbol table info available.</span><br><span class="line">#4  0x00007ffff7b5432d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br><span class="line">No locals.</span><br></pre></td></tr></table></figure></p>
+<p>可以看到frame 0里有两个空指针，对空指针进行操作导致了segmentation fault。结合日志，最后定位到原因是有个配置有问题引起的，至此问题得到解决</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/lidabo/p/4234360.html" target="_blank" rel="noopener">用gdb调试程序笔记: 以段错误(Segmental fault)为例</a></p>
 ]]></content>
       <categories>
-        <category>Docker</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Docker</tag>
-        <tag>Mac</tag>
+        <tag>gdb</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -243,13 +266,13 @@
 ]]></content>
   </entry>
   <entry>
-    <title>All tags</title>
-    <url>/tags/index.html</url>
+    <title>All categories</title>
+    <url>/categories/index.html</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>All categories</title>
-    <url>/categories/index.html</url>
+    <title>All tags</title>
+    <url>/tags/index.html</url>
     <content><![CDATA[]]></content>
   </entry>
 </search>

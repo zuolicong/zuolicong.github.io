@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="gdb,C++,">
 
 
 
@@ -79,17 +79,18 @@
 
 
 
-<meta name="description" content="brief 我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！  contact zuolicong@foxmail.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="https://zuolicong.github.io/about/index.html">
+<meta name="description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
+<meta name="keywords" content="gdb,C++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用gdb调试c++进程段错误(segmentation fault)">
+<meta property="og:url" content="https://zuolicong.github.io/2022/06/13/gdb-debug-segmentation-fault/index.html">
 <meta property="og:site_name" content="chinging">
-<meta property="og:description" content="brief 我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！  contact zuolicong@foxmail.com">
+<meta property="og:description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-29T08:59:48.000Z">
+<meta property="og:updated_time" content="2022-06-12T17:04:08.726Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="brief 我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！  contact zuolicong@foxmail.com">
+<meta name="twitter:title" content="用gdb调试c++进程段错误(segmentation fault)">
+<meta name="twitter:description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
 
 
 
@@ -119,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://zuolicong.github.io/about/">
+  <link rel="canonical" href="https://zuolicong.github.io/2022/06/13/gdb-debug-segmentation-fault/">
 
 
 
 
 
-  <title>about | chinging</title>
+  <title>用gdb调试c++进程段错误(segmentation fault) | chinging</title>
   
 
 
@@ -272,39 +273,199 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2022/06/13/gdb-debug-segmentation-fault/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zuolicong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chinging">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h2 class="post-title" itemprop="name headline">about</h2>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h2 id="brief"><a href="#brief" class="headerlink" title="brief"></a>brief</h2><ul>
-<li>我觉得最好的人生状态，是追求踮踮脚才能够到的东西。像我们这么倔强的家伙，有想做的事，有喜欢的人，就算再够呛，也得试试啊！</li>
-</ul>
-<h2 id="contact"><a href="#contact" class="headerlink" title="contact"></a>contact</h2><ul>
-<li><a href="mailto:zuolicong@foxmail.com" target="_blank" rel="noopener">zuolicong@foxmail.com</a></li>
-</ul>
-
+          <h2 class="post-title" itemprop="name headline">用gdb调试c++进程段错误(segmentation fault)</h2>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-06-13T00:15:05+08:00">
+                2022-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/06/13/gdb-debug-segmentation-fault/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/06/13/gdb-debug-segmentation-fault/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2022/06/13/gdb-debug-segmentation-fault/" class="leancloud_visitors" data-flag-title="用gdb调试c++进程段错误(segmentation fault)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <p>最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[1]    21067 segmentation fault  ./bin/test_process</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h2 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h2><p>先看了下运行目录下没有生成core文件，一般机器默认不生成core文件（很多Linux发行版在默认时禁止生成核心文件），执行以下命令重新运行后生成了core文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimited</span><br></pre></td></tr></table></figure></p>
+<p>运行以下命令进行gdb调试<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> gdb+进程+core文件</span><br><span class="line">gdb ./bin/test_process ./core.7455</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 或者gdb+进程，再执行run</span><br><span class="line">gdb ./bin/test_process</span><br><span class="line">run</span><br></pre></td></tr></table></figure></p>
+<p>出现了以下报错信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Program received signal SIGSEGV, Segmentation fault.</span><br><span class="line">[Switching to Thread 0x7fffec133700 (LWP 8282)]</span><br><span class="line">0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">266	test-group/test-process/src/group.cpp: No such file or directory.</span><br><span class="line">	in test-group/test-process/src/group.cpp</span><br></pre></td></tr></table></figure></p>
+<p>执行backtrace（或者bt）显示堆栈信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(gdb) backtrace</span><br><span class="line">#0  0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">#1  0x00000000008e7d1a in mbdstrgy::push::GroupProcessor::process() (this=0x33bde10) at test-group/test-process/src/group.cpp:334</span><br><span class="line">#2  0x00007ffff7df316f in ?? () from /opt/compiler/gcc-8.2/lib/libstdc++.so.6</span><br><span class="line">#3  0x00007ffff7fbeda4 in start_thread () at pthread_create.c:333</span><br><span class="line">#4  0x00007ffff7b5432d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure></p>
+<p>执行frame查看指定的帧（以#开头的行），由于源文件没有对应上，这里没有显示出具体的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) frame 0</span><br><span class="line">#0  mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:265</span><br><span class="line">265	test-group/test-process/src/group.cpp: No such file or directory.</span><br><span class="line">	in test-group/test-process/src/group.cpp</span><br></pre></td></tr></table></figure></p>
+<p>执行print+变量名可以查看当前context下某个变量的值，这里打印lr_strategy_ptr，发现是 0x0，是个空指针<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) print lr_strategy_ptr</span><br><span class="line">$1 = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">  get() = 0x0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>执行backtrace full完全显示函数之间相互调用时传递的参数值和函数的内部变量值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">(gdb) backtrace full</span><br><span class="line">#0  0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">        lr_strategy_ptr = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        adjust_ptr = std::shared_ptr&lt;mbdstrgy::push::Rerank&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        unique_key = &lt;value optimized out&gt;</span><br><span class="line">        nid = &lt;value optimized out&gt;</span><br><span class="line">        taskid = &lt;value optimized out&gt;</span><br><span class="line">        score = 8.1749536922780693e-315</span><br><span class="line">        iter = &lt;value optimized out&gt;</span><br><span class="line">#1  0x00000000008e7d1a in mbdstrgy::push::GroupProcessor::process() (this=0x33bde10) at test-group/test-process/src/group.cpp:334</span><br><span class="line">        operator_pack = std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x56d6ea50</span><br><span class="line">        &#125;</span><br><span class="line">        logeveryn_329 = 22891</span><br><span class="line">        logeveryn_sc_329 = 100</span><br><span class="line">        logeveryn_c_329 = &lt;value optimized out&gt;</span><br><span class="line">        new_task_score = std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x541d57b0</span><br><span class="line">        &#125;</span><br><span class="line">        count = 157</span><br><span class="line">#2  0x00007ffff7df316f in ?? () from /opt/compiler/gcc-8.2/lib/libstdc++.so.6</span><br><span class="line">No symbol table info available.</span><br><span class="line">#3  0x00007ffff7fbeda4 in start_thread () at pthread_create.c:333</span><br><span class="line">No symbol table info available.</span><br><span class="line">#4  0x00007ffff7b5432d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br><span class="line">No locals.</span><br></pre></td></tr></table></figure></p>
+<p>可以看到frame 0里有两个空指针，对空指针进行操作导致了segmentation fault。结合日志，最后定位到原因是有个配置有问题引起的，至此问题得到解决</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/lidabo/p/4234360.html" target="_blank" rel="noopener">用gdb调试程序笔记: 以段错误(Segmental fault)为例</a></p>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gdb/" rel="tag"># gdb</a>
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/06/12/hexo-generate-html-empty/" rel="next" title="hexo生成的html文件为空问题解决">
+                <i class="fa fa-chevron-left"></i> hexo生成的html文件为空问题解决
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -438,7 +599,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#brief"><span class="nav-number">1.</span> <span class="nav-text">brief</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contact"><span class="nav-number">2.</span> <span class="nav-text">contact</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#gdb调试"><span class="nav-number">1.</span> <span class="nav-text">gdb调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
