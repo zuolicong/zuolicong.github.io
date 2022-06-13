@@ -44,24 +44,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mac docker内请求http(s)失败的问题处理</title>
-    <url>/2017/12/23/docker-for-mac-localhost-issue/</url>
-    <content><![CDATA[<p>新建了一个docker容器，发现在容器内运行go get命令时会报错：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# go get -u -v github.com/nsf/gocode</span><br><span class="line">github.com/nsf/gocode (download)</span><br><span class="line"># cd /home/work/data/www/go/src/github.com/nsf/gocode; git pull --ff-only</span><br><span class="line">error: Failed connect to github.com:8888; Operation now in progress while accessing https://github.com/nsf/gocode/info/refs</span><br><span class="line"></span><br><span class="line">fatal: HTTP request failed</span><br><span class="line">package github.com/nsf/gocode: exit status 1</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>访问github.com时莫名其妙的多了一个8888端口，查了相关资料发现是Mac新版的docker加了个http_proxy代理：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# echo $http_proxy</span><br><span class="line">docker.for.mac.localhost:8888</span><br></pre></td></tr></table></figure></p>
-<p>找了很长时间也没发现怎么去掉这个http_proxy，最后发现可以将http_proxy这个环境变量定义为空，就可以把原来那个值覆盖掉，于是在~/.bash_profile加上<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export http_proxy=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
-<p>再source ~/.bash_profile就可以了。</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Mac</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mac下Python2升级到Python3之后yd包不兼容问题踩坑历程</title>
     <url>/2020/05/03/py2-py3-yd-trouble-for-mac/</url>
     <content><![CDATA[<p>最近用Mac brew安装一些包的时候顺带把Python从2.7升级到了3.7，导致之前在Python2下安装的很多包用不了了，例如yd、ipython、musicbox等：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">╭─zuolicong@zuolicongdeAir ~</span><br><span class="line">╰─$ musicbox</span><br><span class="line">zsh: /usr/local/bin/musicbox: bad interpreter: /usr/local/opt/python/bin/python2.7: no such file or directory</span><br></pre></td></tr></table></figure></p>
@@ -89,6 +71,24 @@
         <tag>Python</tag>
         <tag>pip</tag>
         <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mac docker内请求http(s)失败的问题处理</title>
+    <url>/2017/12/23/docker-for-mac-localhost-issue/</url>
+    <content><![CDATA[<p>新建了一个docker容器，发现在容器内运行go get命令时会报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# go get -u -v github.com/nsf/gocode</span><br><span class="line">github.com/nsf/gocode (download)</span><br><span class="line"># cd /home/work/data/www/go/src/github.com/nsf/gocode; git pull --ff-only</span><br><span class="line">error: Failed connect to github.com:8888; Operation now in progress while accessing https://github.com/nsf/gocode/info/refs</span><br><span class="line"></span><br><span class="line">fatal: HTTP request failed</span><br><span class="line">package github.com/nsf/gocode: exit status 1</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>访问github.com时莫名其妙的多了一个8888端口，查了相关资料发现是Mac新版的docker加了个http_proxy代理：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@27a3532133fa bin]# echo $http_proxy</span><br><span class="line">docker.for.mac.localhost:8888</span><br></pre></td></tr></table></figure></p>
+<p>找了很长时间也没发现怎么去掉这个http_proxy，最后发现可以将http_proxy这个环境变量定义为空，就可以把原来那个值覆盖掉，于是在~/.bash_profile加上<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export http_proxy=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>再source ~/.bash_profile就可以了。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Mac</tag>
       </tags>
   </entry>
   <entry>
@@ -255,11 +255,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>All categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>about</title>
     <url>/about/index.html</url>
     <content><![CDATA[<h2 id="brief"><a href="#brief" class="headerlink" title="brief"></a>brief</h2><ul>
@@ -271,6 +266,11 @@
 <li><a href="mailto:zuolicong@foxmail.com" target="_blank" rel="noopener">zuolicong@foxmail.com</a></li>
 </ul>
 ]]></content>
+  </entry>
+  <entry>
+    <title>All categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>All tags</title>
