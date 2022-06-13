@@ -160,7 +160,7 @@
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">左礼聪的博客</h1>
+        <h1 class="site-subtitle" itemprop="description">左大葱的博客</h1>
       
   </div>
 
@@ -303,7 +303,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2022/06/13/gdb-debug-segmentation-fault/" itemprop="url">用gdb调试c++进程段错误(segmentation fault)</a></h2>
+                <a class="post-title-link" href="/2022/06/13/gdb-debug-segmentation-fault/" itemprop="url">用gdb调试C++进程段错误(segmentation fault)</a></h2>
         
 
         <div class="post-meta">
@@ -365,7 +365,7 @@
 
           
           
-             <span id="/2022/06/13/gdb-debug-segmentation-fault/" class="leancloud_visitors" data-flag-title="用gdb调试c++进程段错误(segmentation fault)">
+             <span id="/2022/06/13/gdb-debug-segmentation-fault/" class="leancloud_visitors" data-flag-title="用gdb调试C++进程段错误(segmentation fault)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -731,7 +731,7 @@
 
       
         
-          <p>在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
+          <p>在开发一个go模块hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2021/03/27/golang-debug-optimize/#more" rel="contents">
@@ -1389,9 +1389,9 @@
     new Valine({
         el: '#comments' ,
         verify: false,
-        notify: false,
-        appId: 'WRXTS4yNIaHrADg4ggwQD0Tg-gzGzoHsz',
-        appKey: 'vROhnTugA3BO6rVkOrTL9bLK',
+        notify: true,
+        appId: 'zH2J4c0hrhXwstpvMGAs00sr-gzGzoHsz',
+        appKey: '2T1YPvIGYqo8c5jhpXcSu1LO',
         placeholder: '欢迎交流~',
         avatar:'mm',
         guest_info:guest,

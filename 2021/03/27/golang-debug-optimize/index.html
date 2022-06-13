@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Linux,Go,Pprof,">
+  <meta name="keywords" content="Go,Linux,Pprof,">
 
 
 
@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
-<meta name="keywords" content="Linux,Go,Pprof">
+<meta name="description" content="在开发一个go模块hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入M">
+<meta name="keywords" content="Go,Linux,Pprof">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记一次go语言debug调优实战">
 <meta property="og:url" content="https://zuolicong.github.io/2021/03/27/golang-debug-optimize/index.html">
 <meta property="og:site_name" content="chinging">
-<meta property="og:description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
+<meta property="og:description" content="在开发一个go模块hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入M">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://zuolicong.github.io/images/go-debug/hermes.png">
 <meta property="og:image" content="https://zuolicong.github.io/images/go-debug/free.jpg">
@@ -95,10 +95,10 @@
 <meta property="og:image" content="https://zuolicong.github.io/images/go-debug/stack-trace.jpg">
 <meta property="og:image" content="https://zuolicong.github.io/images/go-debug/free.jpg">
 <meta property="og:image" content="https://zuolicong.github.io/images/go-debug/ps.jpg">
-<meta property="og:updated_time" content="2022-06-12T13:17:07.581Z">
+<meta property="og:updated_time" content="2022-06-13T14:45:10.898Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="记一次go语言debug调优实战">
-<meta name="twitter:description" content="在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如">
+<meta name="twitter:description" content="在开发一个go模块hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入M">
 <meta name="twitter:image" content="https://zuolicong.github.io/images/go-debug/hermes.png">
 
 
@@ -170,7 +170,7 @@
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">左礼聪的博客</h1>
+        <h1 class="site-subtitle" itemprop="description">左大葱的博客</h1>
       
   </div>
 
@@ -404,7 +404,7 @@
       
 
       
-        <p>在用go开发百度APP自动推送系统hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
+        <p>在开发一个go模块hermes的时候遇到了一个很诡异的问题，该系统的部分流程如下：<br><img src="/images/go-debug/hermes.png" alt="自动推送流程图"><br>hermes订阅了一个推送物料的MQ，由于要做小流量实验，通过一个Dispatcher将物料分成了两条流，分别写到不同的filter channel，Filter模块消费该channel并进行一些参数判断过滤，再写入store channel，Store模块消费该channel并通过redis去重，如果不重复则写入MySQL，并在redis里标记该物料已经处理过了，但是进程在跑了几分钟之后MQ订阅中止了，开始以为是测试环境MQ连接有问题，调试之后才发现是channel阻塞了。在这里记录下调试过程，包括Linux下常用调试命令free、ps、top、strace、pstack等和go的调试工具pprof的使用。</p>
 <a id="more"></a>
 <h2 id="1、Linux调试"><a href="#1、Linux调试" class="headerlink" title="1、Linux调试"></a>1、Linux调试</h2><h3 id="系统内存占用"><a href="#系统内存占用" class="headerlink" title="系统内存占用"></a>系统内存占用</h3><p>在确认不是MQ连接的问题之后，先是怀疑OOM了，用free看了下机器内存使用情况，从”-/+ buffers/cache”这一行可以看到能够挪用的内存还有9869M，不是OOM。<br><img src="/images/go-debug/free.jpg" alt="free结果"><br>查看日志也确认没有OOM信息：<br><img src="/images/go-debug/oom.jpg" alt="OOM日志"></p>
 <h3 id="程序内存占用"><a href="#程序内存占用" class="headerlink" title="程序内存占用"></a>程序内存占用</h3><p>ps和top看下，占用的内存也并不高：<br><img src="/images/go-debug/ps.jpg" alt="ps"><br><img src="/images/go-debug/top.jpg" alt="ps"></p>
@@ -465,9 +465,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"># Linux</a>
-          
             <a href="/tags/Go/" rel="tag"># Go</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
           
             <a href="/tags/Pprof/" rel="tag"># Pprof</a>
           
@@ -848,9 +848,9 @@
     new Valine({
         el: '#comments' ,
         verify: false,
-        notify: false,
-        appId: 'WRXTS4yNIaHrADg4ggwQD0Tg-gzGzoHsz',
-        appKey: 'vROhnTugA3BO6rVkOrTL9bLK',
+        notify: true,
+        appId: 'zH2J4c0hrhXwstpvMGAs00sr-gzGzoHsz',
+        appKey: '2T1YPvIGYqo8c5jhpXcSu1LO',
         placeholder: '欢迎交流~',
         avatar:'mm',
         guest_info:guest,

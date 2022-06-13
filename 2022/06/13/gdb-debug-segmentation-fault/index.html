@@ -82,14 +82,14 @@
 <meta name="description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
 <meta name="keywords" content="gdb,C++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用gdb调试c++进程段错误(segmentation fault)">
+<meta property="og:title" content="用gdb调试C++进程段错误(segmentation fault)">
 <meta property="og:url" content="https://zuolicong.github.io/2022/06/13/gdb-debug-segmentation-fault/index.html">
 <meta property="og:site_name" content="chinging">
 <meta property="og:description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2022-06-12T17:04:08.726Z">
+<meta property="og:updated_time" content="2022-06-13T14:14:22.141Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用gdb调试c++进程段错误(segmentation fault)">
+<meta name="twitter:title" content="用gdb调试C++进程段错误(segmentation fault)">
 <meta name="twitter:description" content="最近在开发一个C++项目的时候遇到了一个问题，进程跑了一段时间后突然退出了，并且报了一个段错误，记录下用gdb调试并定位问题的过程。1[1]    21067 segmentation fault  ./bin/test_process">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title>用gdb调试c++进程段错误(segmentation fault) | chinging</title>
+  <title>用gdb调试C++进程段错误(segmentation fault) | chinging</title>
   
 
 
@@ -161,7 +161,7 @@
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">左礼聪的博客</h1>
+        <h1 class="site-subtitle" itemprop="description">左大葱的博客</h1>
       
   </div>
 
@@ -302,7 +302,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">用gdb调试c++进程段错误(segmentation fault)</h2>
+          <h2 class="post-title" itemprop="name headline">用gdb调试C++进程段错误(segmentation fault)</h2>
         
 
         <div class="post-meta">
@@ -364,7 +364,7 @@
 
           
           
-             <span id="/2022/06/13/gdb-debug-segmentation-fault/" class="leancloud_visitors" data-flag-title="用gdb调试c++进程段错误(segmentation fault)">
+             <span id="/2022/06/13/gdb-debug-segmentation-fault/" class="leancloud_visitors" data-flag-title="用gdb调试C++进程段错误(segmentation fault)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -404,7 +404,7 @@
 <p>执行frame查看指定的帧（以#开头的行），由于源文件没有对应上，这里没有显示出具体的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) frame 0</span><br><span class="line">#0  mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:265</span><br><span class="line">265	test-group/test-process/src/group.cpp: No such file or directory.</span><br><span class="line">	in test-group/test-process/src/group.cpp</span><br></pre></td></tr></table></figure></p>
 <p>执行print+变量名可以查看当前context下某个变量的值，这里打印lr_strategy_ptr，发现是 0x0，是个空指针<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) print lr_strategy_ptr</span><br><span class="line">$1 = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">  get() = 0x0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>执行backtrace full完全显示函数之间相互调用时传递的参数值和函数的内部变量值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">(gdb) backtrace full</span><br><span class="line">#0  0x00000000008e72ae in mbdstrgy::push::GroupProcessor::compute_score(std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; const&amp;, std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt;&amp;) (this=Unhandled dwarf expression opcode 0xf3</span><br><span class="line">) at test-group/test-process/src/group.cpp:266</span><br><span class="line">        lr_strategy_ptr = std::shared_ptr&lt;mbdstrgy::push::Strategy&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        adjust_ptr = std::shared_ptr&lt;mbdstrgy::push::Rerank&gt; (empty) = &#123;</span><br><span class="line">          get() = 0x0</span><br><span class="line">        &#125;</span><br><span class="line">        unique_key = &lt;value optimized out&gt;</span><br><span class="line">        nid = &lt;value optimized out&gt;</span><br><span class="line">        taskid = &lt;value optimized out&gt;</span><br><span class="line">        score = 8.1749536922780693e-315</span><br><span class="line">        iter = &lt;value optimized out&gt;</span><br><span class="line">#1  0x00000000008e7d1a in mbdstrgy::push::GroupProcessor::process() (this=0x33bde10) at test-group/test-process/src/group.cpp:334</span><br><span class="line">        operator_pack = std::shared_ptr&lt;mbdstrgy::push::OperatorPack&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x56d6ea50</span><br><span class="line">        &#125;</span><br><span class="line">        logeveryn_329 = 22891</span><br><span class="line">        logeveryn_sc_329 = 100</span><br><span class="line">        logeveryn_c_329 = &lt;value optimized out&gt;</span><br><span class="line">        new_task_score = std::shared_ptr&lt;mbdstrgy::push::TaskScore&gt; (use count 1, weak count 0) = &#123;</span><br><span class="line">          get() = 0x541d57b0</span><br><span class="line">        &#125;</span><br><span class="line">        count = 157</span><br><span class="line">#2  0x00007ffff7df316f in ?? () from /opt/compiler/gcc-8.2/lib/libstdc++.so.6</span><br><span class="line">No symbol table info available.</span><br><span class="line">#3  0x00007ffff7fbeda4 in start_thread () at pthread_create.c:333</span><br><span class="line">No symbol table info available.</span><br><span class="line">#4  0x00007ffff7b5432d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br><span class="line">No locals.</span><br></pre></td></tr></table></figure></p>
-<p>可以看到frame 0里有两个空指针，对空指针进行操作导致了segmentation fault。结合日志，最后定位到原因是有个配置有问题引起的，至此问题得到解决</p>
+<p>可以看到frame 0里有两个空指针，对空指针进行操作导致了segmentation fault。结合日志，最后定位到原因是有个配置有问题引起的，至此问题得到解决。<br>这个问题其实在单测中可以发现，因此先单测通过再自测是个比较好的习惯。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/lidabo/p/4234360.html" target="_blank" rel="noopener">用gdb调试程序笔记: 以段错误(Segmental fault)为例</a></p>
 
       
@@ -800,9 +800,9 @@
     new Valine({
         el: '#comments' ,
         verify: false,
-        notify: false,
-        appId: 'WRXTS4yNIaHrADg4ggwQD0Tg-gzGzoHsz',
-        appKey: 'vROhnTugA3BO6rVkOrTL9bLK',
+        notify: true,
+        appId: 'zH2J4c0hrhXwstpvMGAs00sr-gzGzoHsz',
+        appKey: '2T1YPvIGYqo8c5jhpXcSu1LO',
         placeholder: '欢迎交流~',
         avatar:'mm',
         guest_info:guest,
