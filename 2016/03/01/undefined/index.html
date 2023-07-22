@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="thoughts,summary,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="实习完已经有一个月了，过年在家的主旋律是吃饭睡觉，来学校几天了心也还没收回来，昨天给电脑重新装了ubuntu系统，然后把hexo安装好了，心血来潮写一篇博客对找工作实习以来的事作一个总结吧。想了想最好的标题应该是非典型程序猿的程序员之路。 不知不觉已经作为一个工（cheng）程（xu）师（yuan）实习了三个月了，从大一到大三上学期从来没想过自己以后的职业会是码代码，因为本来专业（信息管理与信息系">
+<meta name="keywords" content="thoughts,summary">
+<meta property="og:type" content="article">
+<meta property="og:title" content="非典型程序猿的程序员之路">
+<meta property="og:url" content="https://zuolicong.github.io/2016/03/01/undefined/index.html">
+<meta property="og:site_name" content="chinging">
+<meta property="og:description" content="实习完已经有一个月了，过年在家的主旋律是吃饭睡觉，来学校几天了心也还没收回来，昨天给电脑重新装了ubuntu系统，然后把hexo安装好了，心血来潮写一篇博客对找工作实习以来的事作一个总结吧。想了想最好的标题应该是非典型程序猿的程序员之路。 不知不觉已经作为一个工（cheng）程（xu）师（yuan）实习了三个月了，从大一到大三上学期从来没想过自己以后的职业会是码代码，因为本来专业（信息管理与信息系">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%97%A7%E6%80%BB%E9%83%A8.jpg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E5%A4%A7%E5%8E%A6.jpeg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpeg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E6%B1%89%E7%A0%94%E5%8F%91%E4%B8%AD%E5%BF%83.jpg">
+<meta property="og:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E7%A0%94%E9%BB%84%E9%B9%A4%E6%A5%BC%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpg">
+<meta property="og:image" content="http://a3.att.hudong.com/64/20/01300000098168132125204980537.jpg">
+<meta property="og:updated_time" content="2016-07-29T19:57:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="非典型程序猿的程序员之路">
+<meta name="twitter:description" content="实习完已经有一个月了，过年在家的主旋律是吃饭睡觉，来学校几天了心也还没收回来，昨天给电脑重新装了ubuntu系统，然后把hexo安装好了，心血来潮写一篇博客对找工作实习以来的事作一个总结吧。想了想最好的标题应该是非典型程序猿的程序员之路。 不知不觉已经作为一个工（cheng）程（xu）师（yuan）实习了三个月了，从大一到大三上学期从来没想过自己以后的职业会是码代码，因为本来专业（信息管理与信息系">
+<meta name="twitter:image" content="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%97%A7%E6%80%BB%E9%83%A8.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zuolicong.github.io/2016/03/01/undefined/">
+
+
+
+
+
+  <title>非典型程序猿的程序员之路 | chinging</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chinging</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">左大葱的博客</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zuolicong.github.io/2016/03/01/undefined/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zuolicong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chinging">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">非典型程序猿的程序员之路</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-03-01T09:29:45+08:00">
+                2016-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/03/01/undefined/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2016/03/01/undefined/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2016/03/01/undefined/" class="leancloud_visitors" data-flag-title="非典型程序猿的程序员之路">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>实习完已经有一个月了，过年在家的主旋律是吃饭睡觉，来学校几天了心也还没收回来，昨天给电脑重新装了ubuntu系统，然后把hexo安装好了，心血来潮写一篇博客对找工作实习以来的事作一个总结吧。想了想最好的标题应该是非典型程序猿的程序员之路。</p>
+<p>不知不觉已经作为一个工（cheng）程（xu）师（yuan）实习了三个月了，从大一到大三上学期从来没想过自己以后的职业会是码代码，因为本来专业（信息管理与信息系统）属于管理学院，有点偏管理，只是和计算机有着些许的联系，自己平时也不是一个典型的程序猿，并没有花很多的时间在码代码上，然而就是这样的一个我，最后却走上了程序员的道路，现在想想，是偶然，也是必然吧（后来发现程序猿这个工作确实很适合闷骚的我，还有一点比较合我心意的是程序猿面试都是单面，没有群面，不需要和一群人撕逼，那画面太美）！</p>
+<a id="more"></a>
+<p>转折点应该是大三暑假我决定不考研而是找工作，具体原因不再赘述。当时正在跟着班主任做一个大数据的项目，打算作为学校要求的暑期实习，然而在决定找工作之后就后悔之前没有找一个公司的实习了，毕竟有实习经历对找工作是很有帮助的。不过这个项目对后面找工作的帮助也很大，在我的简历中划上了浓墨重彩的一笔。项目做了一个月左右差不多就告一段落了，然后就开始找实习。七月底基本已经没有来学校招实习生的企业了，于是就在智联招聘和51job上投了简历给武汉地区的一些公司。考虑到之前做过和PHP相关的项目，就都投的PHP研发工程师的岗位，但是因为很久没有接触PHP了，有好几家公司的笔试或面试没有通过。看来还是不是搞编程的料，心里这样想着。正当非常失望的时候，杭州阿拉丁信息科技股份有限公司武汉分公司主动联系了我，让我过去面试，这让我喜出望外，于是就约了一个时间过去面试。有了前面的面试经历，我发现自己对PHP不怎么熟，于是这家就报了C++的岗位，毕竟我也是过了二级C++的人（认真脸）。笔试结果那边的主管很满意，聊了聊就决定录用了，考虑到我之前做过PHP相关的项目，而且公司正好比较缺PHP研发人员，就让我做PHP相关的开发工作，这真是有心栽花花不开，无心插柳柳成荫！于是我就这样开始了从事世界上最美的语言–PHP（这个梗估计要说一辈子hhh!）的编程工作。</p>
+<p>在实习的过程中对PHP进行了进一步的巩固，同时也通过一个学姐（在腾讯）和一个学长（在百度）、微信公众号、qq群、论坛等各种途径进行内推，但是很悲催的几乎都石沉大海，只有蘑菇街给了一次电话面试的机会，后面也没有音讯了。后来想想应该是简历的问题，字体太小，而且写了太多与岗位无关的内容，显得很不专业（虽然本来就不是很专业==）。于是我大刀阔斧地对简历进行了删改，决定在秋招中好好的大展拳脚。</p>
+<p>九月开学秋招就轰轰烈烈的展开了，我的宣讲会列表也越排越长，每天都在网申、笔试和面试，简直忙成狗。然而最初情况也并不理想，很多简历杳无音讯，一些公司都止于一面，渐渐的也有些灰心。后面又上演了有心栽花花不开，无心插柳柳成荫的戏码，那天被通知去武大面苏宁的研发岗位，面试完了之后下楼看见formax金融圈在一楼面试，正好是中午，没什么人，于是就决定进去霸面，积累面经也是好的，没想到后面又电话进行了二面。几天之后，当我从武大信息学部美团的面试教室无精打采地走出来之后，意外收到了formax的offer，这让我精神为之一振，顿时长叹了一口气，有一个保底的offer，心里踏实多了，接下来就可以放开手脚接着去各种笔试面试了。看来万事真的要敢于去尝试，不试怎么知道结果如何呢？这天下着大雨，晚上还有几场笔试，还好带了伞。走出大楼的时候遇到一个计算机学院的研究生学长，也是来面美团的，就一起回学校，顺便把他送回了宿舍。这个时候几场笔试都已经开始一段时间了，我就就近去参加了跟谁学的笔试，多试试总是好的。笔试题目都是与PHP相关的，有了暑期的实习经历，这些题目都不在话下，后来就接到了跟谁学的面试通知，也顺利拿到了offer，期间还拿到了tp-link的offer。此时也才到九月底，我拿到了三个offer，可以放松一下好好过个国庆节了。</p>
+<p>后面我就没再继续找了，决定在已经拿到的三个offer里选一个，formax毕竟是霸面拿到的offer，没那么有归属感，tp-link平台虽然很大，也有在向互联网方向发展，但是还是有一点偏传统企业，约束太多，而跟谁学致力于互联网教育，是一家典型的互联网企业，很有前景，薪资福利都不错，还有其它的激励，最重要的一个原因是它要在武汉建立一个研发中心，去那边工作相当于从零开始，进步空间很大，学到的东西更多，而我以后打算创业，在这样的环境下工作对以后的创业（如果有机会的话）会很有帮助，再就是武汉离家近，也不像北上广深那样拥堵，那样压力大，就像跟谁学的CTO在面试我的时候说的，在武汉幸福感会很高（根据我后面去北京总部实习的经历来看，确实是这样，在北京每天上班挤地铁像战斗一般，有一次打个的本来半个小时的路程硬是走了一个多小时，虽然当时是包住宿，但是对高的离谱的房租也有所耳闻，而武汉则会好很多），于是就选择了去跟谁学，并且在11月份开始了在跟谁学的为期三个月的实习。</p>
+<p>在这三个月里，我可以说见证了跟谁学的飞速发展，先是去北京实习，去的时候总部还是中关村软件园2号楼2308室，条件比较差，分配的导师和另一个同事分别向两边挪了挪，腾出一个位置作为我的工位，但是设备一流，人手一台Macbook Pro，我也不例外的发了一台，还有两件纪念衫，因为是t恤，到现在还没穿过。大家工作都很有干劲，我也不例外，当时虽然刚去北京感冒了，但依然阻挡不了我的热情，因为创业是一件如此让人热血澎湃的事！中午和晚上都有工作餐送过来，伙食也是一流。好吃的东西总能激励人更努力的做事，嗯。在这里待了一个星期左右，公司就搬到了新大楼，共有五层，装修高端大气上档次，我的工位安排在二楼一个靠窗的位置，阳光充足，可以边码代码边晒太阳，这在北京的冬天是极好的。就这样一直实习到12月上旬，因为学校新开了一门课，我就回武汉上课了。12月下旬的时候，跟谁学武汉研发中心就装修好了，我就直接到那边实习了。武研位于街道口百脑汇二期20楼，对面就是武大信息学部，在上面可以俯瞰武大信息学部全景，因为地段比较好，又是5A级写字楼，房租是光谷软件园的两倍，不得不说公司土豪==。CTO的说法是之所以选在这里，是不想被武汉当地的传统企业所同化，而要保持一个互联网创业公司的活力。事实也确实是这样，武研几乎是与北京总部保持同步，所有数据是共享的，网络互通，有电话会议可以随时与北京总部进行无障碍交流，装备也都是Macbook Pro，就连室内装修都是一样的，甚至比总部有过之而无不及，最重要的是武研研发人员有一半以上来自华科、武大（相当一部分是研究生）和百度的，这样硬件和人员配备，可以说在街道口，甚至是整个武汉地区都算是顶级互联网公司，在这样的公司上班自然是斗志满满，也更加坚定了在程序员这条路上走下去的信念。</p>
+<p>中关村软件园2号楼2308室旧总部：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%97%A7%E6%80%BB%E9%83%A8.jpg" alt="旧总部"></p>
+<p>博彦科技大厦新总部：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E5%A4%A7%E5%8E%A6.jpeg" alt="新总部大厦"><br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%80%BB%E9%83%A8%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpeg" alt="新总部会议室"></p>
+<p>街道口百脑汇二期20楼武汉研发中心：<br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E6%B1%89%E7%A0%94%E5%8F%91%E4%B8%AD%E5%BF%83.jpg" alt="武汉研发中心"><br><img src="http://7xqk51.com1.z0.glb.clouddn.com/blog%2F%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%8B%E8%B7%AF%2F%E6%AD%A6%E7%A0%94%E9%BB%84%E9%B9%A4%E6%A5%BC%E4%BC%9A%E8%AE%AE%E5%AE%A4.jpg" alt="武研黄鹤楼会议室"></p>
+<p>在武汉研发中心一直实习到16年二月底，在这期间收获颇多，在PHP、Phalcon框架、git、数据库、网络等知识上有了质的飞跃，也让我更加确定程序员是适合我的职业，可以专注于码代码而不受其它事情的羁绊，而且它是具有创造性的，每当看到自己写的东西顺利运行的时候都有一种满满的成就感。在实习期间我的工号是1962，这意味着我是第1962个加入跟谁学的，也是跟谁学第一批校招的员工之一，以后也算得上是元老级的员工了，这让我兴奋莫名。后来听说我们部门的同事有工号是两位数的，听起来让人羡慕不已，这才是真正元老级的人物，听他们说起公司成立之初炎炎夏日在北京五道口地下室光着膀子码代码的事情，就像听着一群英雄好汉一起打江山的荡气回肠的故事，让人热血澎湃，激动不已，创业真是一件让人向往的事！说不定有朝一日，我也会像他们一样，为创立一家新公司而奋不顾身。未来的事，谁又说的准呢？<br><img src="http://a3.att.hudong.com/64/20/01300000098168132125204980537.jpg" alt="i&#39;m a coder"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/thoughts/" rel="tag"># thoughts</a>
+          
+            <a href="/tags/summary/" rel="tag"># summary</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/23/git-tag/" rel="next" title="git打tag的方法和技巧">
+                <i class="fa fa-chevron-left"></i> git打tag的方法和技巧
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/25/phalcom-model-double-save/" rel="prev" title="Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨">
+                Phalcon框架的Model连续进行两次save操作不能保存数据库非0或非空默认值问题的探讨 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="zuolicong">
+            
+              <p class="site-author-name" itemprop="name">zuolicong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zuolicong" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zuolicong@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zuolicong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'zH2J4c0hrhXwstpvMGAs00sr-gzGzoHsz',
+        appKey: '2T1YPvIGYqo8c5jhpXcSu1LO',
+        placeholder: '欢迎交流~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("zH2J4c0hrhXwstpvMGAs00sr-gzGzoHsz", "2T1YPvIGYqo8c5jhpXcSu1LO");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
